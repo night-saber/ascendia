@@ -7,8 +7,8 @@
 const http = require('http'), fs = require('fs'), path = require('path'), crypto = require('crypto');
 const PORT = +process.env.PORT || 8080;
 const DATA = process.env.DATA_FILE || path.join(__dirname, 'ascendia-data.json');
-let DB = { users: {} };
-try { DB = JSON.parse(fs.readFileSync(DATA, 'utf8')); if (!DB.users) DB.users = {}; } catch (e) {}
+let DB = { users: {}, guilds: {} };
+try { DB = JSON.parse(fs.readFileSync(DATA, 'utf8')); if (!DB.users) DB.users = {}; if (!DB.guilds) DB.guilds = {}; } catch (e) {}
 let dirty = false;
 function flush() {
   if (!dirty) return; dirty = false;
@@ -18,7 +18,7 @@ setInterval(flush, 5000);
 process.on('SIGINT', () => { dirty = true; try { fs.writeFileSync(DATA, JSON.stringify(DB)); } catch (e) {} process.exit(0); });
 
 const clients = new Set();
-const RELAY = new Set(['st', 'chat', 'inv', 'acc', 'pleave', 'run', 'dmg', 'hello', 'leave']);
+const RELAY = new Set(['st', 'chat', 'inv', 'acc', 'pleave', 'run', 'dmg', 'hello', 'leave', 'lead']);
 
 const server = http.createServer((req, res) => {
   if (req.url === '/' || req.url === '/index.html') {
@@ -84,6 +84,7 @@ function authOk(c, name, key, save) {
   for (const o of clients) if (o !== c && o.ok && key && o.user === key) { send(o, { t: 'kick' }); o.socket.end(); }
   c.ok = true; c.name = name; c.user = key;
   send(c, { t: 'auth', ok: true, name, save: save || null });
+  if (key) guildInfo(c);
   console.log('[+] ' + name + (key ? '' : ' (guest)') + '  online=' + [...clients].filter(x => x.ok).length);
 }
 async function onMsg(c, s) {
@@ -114,6 +115,8 @@ async function onMsg(c, s) {
     } catch (e) { send(c, { t: 'auth', ok: false, err: 'Server error.' }); }
     return;
   }
+  if (m.t === 'g') return onGuild(c, m);
+  if (m.t === 'gchat') { const g = guildOf(c); if (!g) return gnote(c, 'You are not in a guild.'); const msg = String(m.msg || '').slice(0, 120); guildBroadcast(g, o => send(o, { t: 'gmsg', name: c.name, msg })); return; }
   if (m.t === 'save') {
     if (c.user && m.save && typeof m.save === 'object' && m.save.p && DB.users[c.user]) { DB.users[c.user].save = m.save; dirty = true; }
     return;
@@ -129,11 +132,86 @@ async function onMsg(c, s) {
     c.st = { name: String(m.name || c.name).replace(/[\x00-\x1f<>]/g, '').slice(0, 16), color: /^#[0-9a-f]{6}$/i.test(m.color) ? m.color : '#ffd24a', lvl: n(m.lvl) | 0, fl: n(m.fl) | 0, mode: String(m.mode).slice(0, 4), f: n(m.f) | 0, rs: n(m.rs) >>> 0, x: n(m.x), y: n(m.y), face: n(m.face), mv: !!m.mv };
     m = Object.assign({ t: 'st' }, c.st);
   }
-  if (m.t === 'chat') m = { t: 'chat', ch: m.ch === 'Whisper' ? 'Whisper' : 'World', to: m.to, name: String(m.name || c.name).slice(0, 16), color: m.color, msg: String(m.msg || '').slice(0, 120) };
+  if (m.t === 'chat') m = { t: 'chat', ch: (m.ch === 'Whisper' || m.ch === 'Party') ? m.ch : 'World', to: m.to, name: String(m.name || c.name).slice(0, 16), color: m.color, msg: String(m.msg || '').slice(0, 120) };
   m.id = c.id;
   if (m.to) { for (const o of clients) if (o.ok && o.id === m.to) send(o, m); }
   else for (const o of clients) if (o !== c && o.ok) send(o, m);
 }
+// ---- guilds (accounts only, persisted in the data file)
+const GN_RE = /^[A-Za-z0-9 ]{3,20}$/;
+const gKey = s => String(s).toLowerCase().trim().replace(/\s+/g, ' ');
+const gnote = (c, msg) => send(c, { t: 'gnote', msg });
+function guildOf(c) { const u = c.user && DB.users[c.user]; return u && u.guild && DB.guilds[u.guild] ? DB.guilds[u.guild] : null; }
+function guildInfo(c) {
+  const g = guildOf(c);
+  if (!g) { send(c, { t: 'ginfo', guild: null }); return; }
+  const members = Object.keys(g.members).map(k => ({ name: DB.users[k] ? DB.users[k].name : k, role: g.members[k], online: [...clients].some(o => o.ok && o.user === k) }));
+  send(c, { t: 'ginfo', guild: { name: g.name, motd: g.motd || '', members, me: g.members[c.user] } });
+}
+function guildBroadcast(g, fn) { for (const o of clients) if (o.ok && o.user && g.members[o.user]) fn(o); }
+const guildRefresh = g => guildBroadcast(g, guildInfo);
+function onGuild(c, m) {
+  if (!c.user) return gnote(c, 'Guests cannot use guilds. Log in with an account.');
+  const U = DB.users[c.user], g = guildOf(c), op = String(m.op || '');
+  const role = g ? g.members[c.user] : null, mod = role === 'leader' || role === 'officer';
+  const target = () => { const n = String(m.name || '').toLowerCase(); return g && Object.keys(g.members).find(k => (DB.users[k] ? DB.users[k].name : k).toLowerCase() === n); };
+  if (op === 'info') return guildInfo(c);
+  if (op === 'create') {
+    if (g) return gnote(c, 'Leave your current guild first.');
+    const name = String(m.name || '').trim().replace(/\s+/g, ' '), k = gKey(name);
+    if (!GN_RE.test(name)) return gnote(c, 'Guild names are 3-20 letters, numbers or spaces.');
+    if (DB.guilds[k]) return gnote(c, 'That guild name is taken.');
+    DB.guilds[k] = { name, members: { [c.user]: 'leader' }, motd: '', created: Date.now() }; U.guild = k; dirty = true;
+    gnote(c, 'Guild "' + name + '" founded.'); return guildInfo(c);
+  }
+  if (op === 'decline') { c.ginv = null; return gnote(c, 'Invite declined.'); }
+  if (op === 'accept') {
+    const ng = c.ginv && DB.guilds[c.ginv];
+    if (!ng) return gnote(c, 'You have no pending guild invite.');
+    if (g) return gnote(c, 'Leave your current guild first.');
+    if (Object.keys(ng.members).length >= 30) return gnote(c, 'That guild is full.');
+    ng.members[c.user] = 'member'; U.guild = c.ginv; c.ginv = null; dirty = true;
+    guildBroadcast(ng, o => gnote(o, U.name + ' joined the guild.')); return guildRefresh(ng);
+  }
+  if (!g) return gnote(c, 'You are not in a guild.');
+  if (op === 'invite') {
+    if (!mod) return gnote(c, 'Only officers and the leader can invite.');
+    const n = String(m.name || '').toLowerCase(), o = [...clients].find(x => x.ok && x.user && x.name.toLowerCase() === n);
+    if (!o) return gnote(c, 'No logged-in player named "' + m.name + '" is online.');
+    if (guildOf(o)) return gnote(c, o.name + ' is already in a guild.');
+    o.ginv = U.guild; gnote(o, U.name + ' invited you to "' + g.name + '". Type /guild accept or /guild decline.'); return gnote(c, 'Invite sent to ' + o.name + '.');
+  }
+  if (op === 'leave') {
+    if (role === 'leader' && Object.keys(g.members).length > 1) return gnote(c, 'Promote a new leader first, or /guild disband.');
+    delete g.members[c.user]; delete U.guild; dirty = true;
+    if (!Object.keys(g.members).length) delete DB.guilds[gKey(g.name)];
+    gnote(c, 'You left the guild.'); guildInfo(c); return guildRefresh(g);
+  }
+  if (op === 'disband') {
+    if (role !== 'leader') return gnote(c, 'Only the leader can disband.');
+    const ks = Object.keys(g.members); ks.forEach(k => { if (DB.users[k]) delete DB.users[k].guild; });
+    delete DB.guilds[gKey(g.name)]; dirty = true;
+    for (const o of clients) if (o.ok && ks.indexOf(o.user) >= 0) { gnote(o, 'The guild was disbanded.'); guildInfo(o); }
+    return;
+  }
+  if (op === 'kick') {
+    const k = target();
+    if (!k || k === c.user) return gnote(c, 'No such member (use /guild leave for yourself).');
+    if (!mod || g.members[k] === 'leader' || (g.members[k] === 'officer' && role !== 'leader')) return gnote(c, 'You cannot kick that member.');
+    delete g.members[k]; delete DB.users[k].guild; dirty = true;
+    for (const o of clients) if (o.ok && o.user === k) { gnote(o, 'You were removed from the guild.'); guildInfo(o); }
+    return guildRefresh(g);
+  }
+  if (op === 'promote' || op === 'demote') {
+    if (role !== 'leader') return gnote(c, 'Only the leader can change ranks.');
+    const k = target(); if (!k || k === c.user) return gnote(c, 'No such member.');
+    g.members[k] = op === 'promote' ? (g.members[k] === 'officer' ? 'leader' : 'officer') : 'member';
+    if (g.members[k] === 'leader') g.members[c.user] = 'officer';
+    dirty = true; return guildRefresh(g);
+  }
+  if (op === 'motd') { if (!mod) return gnote(c, 'Only officers and the leader can set the message.'); g.motd = String(m.text || '').slice(0, 100); dirty = true; return guildRefresh(g); }
+}
+
 function drop(c) {
   if (c.dead) return; c.dead = true; clients.delete(c);
   if (c.ok) { for (const o of clients) if (o.ok) send(o, { t: 'leave', id: c.id }); console.log('[-] ' + c.name + '  online=' + [...clients].filter(x => x.ok).length); }

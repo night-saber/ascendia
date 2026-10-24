@@ -5,77 +5,84 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ASCENDIA — Realm of Echoes</title>
 <style>
+:root{--ink:#0b0d17;--pan:#141828;--pan2:#1b2036;--line:#2d3556;--tx:#e8eaf6;--mut:#8f97b8;--gold:#e9b44c;--echo:#56d6c9;--bad:#e5566d;--ser:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;overflow:hidden;background:#07070d;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#e8ecff;user-select:none;-webkit-user-select:none}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--tx);user-select:none;-webkit-user-select:none}
 canvas#c{position:fixed;inset:0;display:block;cursor:crosshair}
-#chat{position:fixed;left:10px;bottom:10px;width:min(390px,48vw);z-index:5;pointer-events:none}
-#chatlog{max-height:176px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;font-size:12.5px;line-height:1.35;text-shadow:0 1px 2px #000;padding:6px 8px;background:linear-gradient(180deg,rgba(8,10,24,0),rgba(8,10,24,.6));border-radius:8px}
+#chat{position:fixed;left:10px;bottom:10px;width:min(400px,48vw);z-index:5;pointer-events:none}
+#chatlog{max-height:176px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;font-size:12.5px;line-height:1.4;text-shadow:0 1px 2px #000;padding:6px 8px;background:linear-gradient(180deg,rgba(8,10,24,0),rgba(8,10,24,.7));border-radius:8px}
 #chatlog div{margin:1px 0;animation:fadeln 22s forwards}
 @keyframes fadeln{0%,60%{opacity:1}100%{opacity:.28}}
 #chat.open #chatlog div{animation:none;opacity:1}
-#chatin{pointer-events:auto;display:none;width:100%;margin-top:4px;background:rgba(10,12,28,.92);border:1px solid #5affd0;color:#fff;padding:6px 8px;border-radius:6px;font:13px system-ui;outline:none}
-#panel{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(1020px,96vw);max-height:88vh;overflow:auto;z-index:10;background:linear-gradient(160deg,rgba(18,20,46,.97),rgba(10,10,26,.98));border:1px solid rgba(120,140,255,.38);border-radius:14px;box-shadow:0 0 70px rgba(90,255,208,.12),0 24px 70px rgba(0,0,0,.75);padding-bottom:12px;user-select:none}
+#chatin{pointer-events:auto;display:none;width:100%;margin-top:4px;background:rgba(12,14,28,.95);border:1px solid var(--gold);color:#fff;padding:6px 8px;border-radius:6px;font:13px system-ui;outline:none}
+#panel{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(1060px,96vw);max-height:88vh;overflow:auto;z-index:10;background:var(--pan);border:1px solid var(--line);border-top:2px solid var(--gold);border-radius:10px;box-shadow:0 30px 80px rgba(0,0,0,.8);padding-bottom:12px;user-select:none}
 #panel.hidden{display:none}
-.ph{display:flex;align-items:center;justify-content:space-between;padding:11px 18px;border-bottom:1px solid rgba(120,140,255,.2);position:sticky;top:0;background:rgba(14,16,38,.98);z-index:3}
-.ph h2{margin:0;font-size:17px;letter-spacing:.14em;text-transform:uppercase;color:#5affd0}
-.ph .res{font-size:13px;color:#ffd96a}
-.x{cursor:pointer;background:none;border:1px solid #556;color:#ccd;border-radius:6px;padding:3px 10px;font-size:14px}
-.x:hover{border-color:#ff5a7a;color:#ff5a7a}
+.ph{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;position:sticky;top:0;background:var(--pan);z-index:3}
+.ph h2{margin:0;font:600 20px var(--ser);letter-spacing:.02em;color:var(--gold)}
+.ph .res{font-size:13px;color:#f2d98b;margin-left:auto}
+.nav{display:flex;gap:2px;padding:0 14px;border-bottom:1px solid var(--line);position:sticky;top:50px;background:var(--pan);z-index:3;overflow-x:auto}
+.tab{cursor:pointer;background:none;border:0;border-bottom:2px solid transparent;color:var(--mut);padding:8px 14px;font:600 13px system-ui}
+.tab:hover{color:var(--tx)}.tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+.x{cursor:pointer;background:none;border:1px solid var(--line);color:var(--mut);border-radius:6px;padding:3px 10px;font-size:14px}
+.x:hover{border-color:var(--bad);color:var(--bad)}
 .pb{padding:12px 18px}
-h3{margin:12px 0 6px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#9fb0ff;font-weight:600}
-.btn{cursor:pointer;background:rgba(90,255,208,.1);border:1px solid rgba(90,255,208,.5);color:#dffff6;border-radius:7px;padding:5px 11px;font-size:12.5px;margin:2px;font-family:inherit}
-.btn:hover{background:rgba(90,255,208,.28)}
+h3{margin:14px 0 6px;font:600 15px var(--ser);color:#c9cff0}
+.btn{cursor:pointer;background:rgba(86,214,201,.08);border:1px solid rgba(86,214,201,.45);color:#d8fbf6;border-radius:6px;padding:5px 11px;font-size:12.5px;margin:2px;font-family:inherit}
+.btn:hover{background:rgba(86,214,201,.22)}
 .btn.dis{opacity:.35;pointer-events:none}
-.btn.red{border-color:#ff5a7a;background:rgba(255,90,122,.12);color:#ffdfe5}
-.btn.gold{border-color:#ffd24a;background:rgba(255,210,74,.12);color:#fff2c0}
-.btn.on{background:rgba(90,255,208,.4)}
-.cols2{display:grid;grid-template-columns:minmax(280px,1fr) minmax(300px,1.35fr);gap:16px}
+.btn.red{border-color:rgba(229,86,109,.7);background:rgba(229,86,109,.1);color:#ffdfe5}
+.btn.gold{border-color:rgba(233,180,76,.8);background:rgba(233,180,76,.12);color:#fff0c8}
+.btn.on{background:rgba(86,214,201,.35)}
+.cols2{display:grid;grid-template-columns:minmax(280px,1fr) minmax(300px,1.35fr);gap:18px}
 .grid{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
-.card{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:9px 11px;font-size:13px}
-.item{border:1px solid;border-radius:8px;padding:5px 8px;font-size:12px;cursor:pointer;background:rgba(0,0,0,.32);margin-bottom:4px}
-.item:hover{background:rgba(255,255,255,.08)}
-.item.sel{box-shadow:0 0 0 2px #fff inset}
-.item.empty{border-color:#334;color:#667;cursor:default}
-.sm{font-size:11px;opacity:.78}
-.aff{font-size:12px;color:#a8e6ff}
-.leg{color:#ff9a3a;font-size:12px;margin-top:2px}
+.card{background:var(--pan2);border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:13px}
+.item{border:1px solid;border-left-width:4px;border-radius:6px;padding:5px 8px;font-size:12px;cursor:pointer;background:rgba(0,0,0,.3);margin-bottom:4px}
+.item:hover{background:rgba(255,255,255,.07)}.item.sel{box-shadow:0 0 0 2px #fff inset}
+.item.empty{border-color:#2a3050;color:#5c6485;cursor:default}
+.sm{font-size:11px;opacity:.78}.aff{font-size:12px;color:#a8e6ff}.leg{color:#ff9a3a;font-size:12px;margin-top:2px}
 .rn{display:inline-block;min-width:21px;text-align:center;border-radius:50%;font-size:10px;font-weight:700;color:#000;margin:1px 2px 0 0;padding:2px 3px}
 .rn.e{background:none;border:1px dashed #889;color:#889}
-.bar{height:9px;background:#1a1c30;border-radius:5px;overflow:hidden;margin:4px 0}
-.bar>i{display:block;height:100%;background:linear-gradient(90deg,#5affd0,#7d9dff)}
+.bar{height:8px;background:#0e1122;border-radius:4px;overflow:hidden;margin:4px 0}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--echo))}
 .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.stat{display:flex;justify-content:space-between;font-size:12.5px;padding:1px 0;border-bottom:1px dotted rgba(255,255,255,.08)}
-.tree{position:relative;height:430px;min-width:960px}
-.tn{position:absolute;width:58px;height:58px;border-radius:50%;border:2px solid #445;background:#14162c;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;transition:.12s}
-.tn .tr{position:absolute;bottom:-8px;right:-4px;font-size:10px;background:#0b0c1c;border:1px solid #556;border-radius:8px;padding:0 4px}
-.tn.av{border-color:#5affd0;box-shadow:0 0 14px rgba(90,255,208,.5)}
-.tn.on{border-color:#ffd24a;background:#2a2410;box-shadow:0 0 14px rgba(255,210,74,.45)}
-.tn.lock{opacity:.35;cursor:default}
-.tn:hover::after{content:attr(data-tip);position:absolute;left:64px;top:0;width:190px;z-index:20;background:#0b0c1c;border:1px solid #7d6aff;border-radius:8px;padding:6px 8px;font-size:11.5px;line-height:1.35;pointer-events:none;white-space:normal;color:#dde}
-.bl{position:absolute;top:0;font-size:12px;letter-spacing:.2em;color:#8a96ff;text-transform:uppercase}
+.stat{display:flex;justify-content:space-between;font-size:12.5px;padding:2px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.tree{position:relative;height:640px;min-width:1260px}
+.tn{position:absolute;width:58px;height:58px;border-radius:16px;border:2px solid #353d63;background:var(--pan2);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;transition:.12s}
+.tn .tr{position:absolute;bottom:-8px;right:-4px;font-size:10px;background:var(--ink);border:1px solid var(--line);border-radius:8px;padding:0 4px}
+.tn.av{border-color:var(--echo);box-shadow:0 0 12px rgba(86,214,201,.45)}
+.tn.on{border-color:var(--gold);background:#2b2414;box-shadow:0 0 12px rgba(233,180,76,.4)}
+.tn.lock{opacity:.3;cursor:default}
+.tn:hover::after{content:attr(data-tip);position:absolute;left:64px;top:0;width:200px;z-index:20;background:var(--ink);border:1px solid var(--gold);border-radius:8px;padding:6px 8px;font-size:11.5px;line-height:1.35;pointer-events:none;white-space:normal;color:#dde}
+.bl{position:absolute;top:0;font:600 16px var(--ser);color:var(--gold)}
 #toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:20;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:5px}
-#toast div{background:rgba(12,14,34,.92);border:1px solid #5affd0;padding:6px 14px;border-radius:20px;font-size:13px;animation:tin 3.2s forwards}
+#toast div{background:rgba(14,17,32,.95);border:1px solid var(--gold);padding:6px 14px;border-radius:6px;font-size:13px;animation:tin 3.2s forwards}
 @keyframes tin{0%{opacity:0;transform:translateY(-8px)}8%{opacity:1;transform:none}85%{opacity:1}100%{opacity:0}}
-#banner{position:fixed;top:92px;left:50%;transform:translateX(-50%);z-index:19;pointer-events:none;text-align:center;font-size:30px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;text-shadow:0 0 18px currentColor,0 3px 8px #000;opacity:0;transition:opacity .5s}
-#banner small{display:block;font-size:13px;letter-spacing:.08em;font-weight:500;color:#dde;text-shadow:0 2px 4px #000}
+#banner{position:fixed;top:92px;left:50%;transform:translateX(-50%);z-index:19;pointer-events:none;text-align:center;font:700 32px var(--ser);letter-spacing:.08em;text-shadow:0 0 18px currentColor,0 3px 8px #000;opacity:0;transition:opacity .5s}
+#banner small{display:block;font:500 13px system-ui;letter-spacing:.04em;color:#dde;text-shadow:0 2px 4px #000}
 #banner.show{opacity:1}
-::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:#334;border-radius:4px}
-#login{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,#1c1850 0%,#0a0a1e 55%,#050510 100%)}
-.lbox{width:min(380px,92vw);background:rgba(16,18,42,.94);border:1px solid rgba(120,140,255,.4);border-radius:16px;padding:22px 22px 16px;box-shadow:0 0 80px rgba(90,255,208,.12),0 20px 60px rgba(0,0,0,.7)}
-.lbox h1{margin:0;text-align:center;letter-spacing:.35em;font-size:30px;color:#5affd0;text-shadow:0 0 22px rgba(90,255,208,.6)}
-.lsub{text-align:center;font-size:12px;letter-spacing:.3em;color:#9fb0ff;text-transform:uppercase;margin:2px 0 14px}
-.lbox input{width:100%;margin:4px 0;background:rgba(8,10,28,.9);border:1px solid #445;color:#fff;padding:9px 10px;border-radius:8px;font:14px system-ui;outline:none}
-.lbox input:focus{border-color:#5affd0}
+#dlg{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);width:min(640px,92vw);z-index:15;display:none;background:rgba(14,17,32,.96);border:1px solid var(--gold);border-radius:10px;padding:12px 16px 12px 70px;box-shadow:0 12px 40px rgba(0,0,0,.7)}
+#dlg::before{content:'\2726';position:absolute;left:14px;top:14px;width:42px;height:42px;border-radius:50%;background:#2b2414;border:2px solid var(--gold);color:var(--gold);font-size:22px;display:flex;align-items:center;justify-content:center}
+#dlg .dw{font:700 15px var(--ser);color:var(--gold);margin-bottom:3px}
+#dlgt{font-size:15px;line-height:1.45}
+#dlg .btn{position:absolute;right:10px;top:8px;font-size:11px;padding:2px 8px}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:#2d3556;border-radius:4px}
+#login{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 20%,#1a1d3c 0%,#0c0e1c 60%,#07080f 100%)}
+.lbox{width:min(380px,92vw);background:var(--pan);border:1px solid var(--line);border-top:2px solid var(--gold);border-radius:10px;padding:22px 22px 16px;box-shadow:0 30px 80px rgba(0,0,0,.7)}
+.lbox h1{margin:0;text-align:center;letter-spacing:.22em;font:600 32px var(--ser);color:var(--gold)}
+.lsub{text-align:center;font:italic 14px var(--ser);color:var(--mut);margin:2px 0 14px}
+.lbox input{width:100%;margin:4px 0;background:var(--ink);border:1px solid var(--line);color:#fff;padding:9px 10px;border-radius:6px;font:14px system-ui;outline:none}
+.lbox input:focus{border-color:var(--gold)}
 .lrow{display:flex;gap:6px;margin:6px 0}.lrow .btn{flex:1;padding:8px}
 #lg-msg{min-height:18px;margin:6px 0 2px;font-size:12.5px;color:#ff8a9a;text-align:center}
-.lbox details{margin-top:10px;font-size:12px;color:#9fb0ff}.lbox summary{cursor:pointer}
+.lbox details{margin-top:10px;font-size:12px;color:var(--mut)}.lbox summary{cursor:pointer}
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
-<div id="chat"><div id="chatlog"></div><input id="chatin" maxlength="90" autocomplete="off" placeholder="Type a message — /help for commands"></div>
+<div id="chat"><div id="chatlog"></div><input id="chatin" maxlength="90" autocomplete="off" placeholder="Chat here — /help lists commands"></div>
 <div id="panel" class="hidden"></div>
 <div id="toast"></div>
+<div id="dlg"><div class="dw">Warden Eira</div><div id="dlgt"></div><button class="btn" id="dlgs">Skip tutorial</button></div>
 <div id="banner"></div>
 <div id="login"><div class="lbox"><h1>ASCENDIA</h1><div class="lsub">Realm of Echoes</div>
 <input id="lg-u" placeholder="Username" maxlength="16" autocomplete="username" spellcheck="false">
@@ -280,17 +287,43 @@ const TAL={
   f4:{i:'↯',n:'Roll Master',b:2,c:0,r:2,max:1,fx:{dodgeC:1},req:['f2'],d:'+1 dodge roll charge'},
   f7:{i:'✚',n:'Second Wind',b:2,c:1,r:2,max:3,fx:{regen:2},req:['f6'],d:'+2 life regenerated per second'},
   f8:{i:'ᚱ',n:'Rune Seeker',b:2,c:2,r:2,max:3,fx:{rune:30},req:['f3'],d:'+30% rune drop chance'},
-  f5:{i:'⇑',n:'Double Jump',b:2,c:0,r:3,max:1,flag:'dj',req:['f4'],d:'Trials: jump a second time in mid-air'},
-  f9:{i:'✧',n:'Treasure Sense',b:2,c:2,r:3,max:1,fx:{gf:20,ldrop:10},req:['f8'],d:'+20% gold find, +10% loot chance'}
+  f5:{i:'⇑',n:'Windrunner',b:2,c:0,r:3,max:3,fx:{move:4},req:['f4'],d:'+4% move speed per rank'},
+  f9:{i:'✧',n:'Treasure Sense',b:2,c:2,r:3,max:1,fx:{gf:20,ldrop:10},req:['f8'],d:'+20% gold find, +10% loot chance'},
+  m8:{i:'⚔',n:'Executioner',b:0,c:0,r:4,max:1,flag:'execute',req:['m5'],d:'+40% damage to enemies below 25% life'},
+  m9:{i:'»',n:'Gunslinger',b:0,c:2,r:4,max:5,fx:{aspd:4},req:['m6'],d:'+4% attack speed per rank'},
+  m10:{i:'♛',n:'Warlord',b:0,c:1,r:4,max:3,fx:{dmgP:6},req:['m8','m9'],d:'+6% damage per rank'},
+  m11:{i:'✸',n:'Apex Predator',b:0,c:1,r:5,max:1,flag:'apex',req:['m10'],d:'+25% damage while at full life'},
+  a12:{i:'♨',n:'Searing Heat',b:1,c:0,r:4,max:5,fx:{fire:6},req:['a5'],d:'+6% fire damage per rank'},
+  a13:{i:'✧',n:'Spellweave',b:1,c:1,r:4,max:5,fx:{cdr:2,multi:2},req:['a8'],d:'+2% cooldown reduction, +2% multishot per rank'},
+  a14:{i:'ϟ',n:'Tempest',b:1,c:2,r:4,max:5,fx:{volt:6},req:['a7'],d:'+6% volt damage per rank'},
+  a15:{i:'☣',n:'Deathbloom',b:1,c:3,r:4,max:5,fx:{venom:6},req:['a11'],d:'+6% venom damage per rank'},
+  a16:{i:'✺',n:'Archmage',b:1,c:1,r:5,max:3,fx:{dmgP:6,cdr:3},req:['a13'],d:'+6% damage, +3% cooldown reduction per rank'},
+  f10:{i:'»',n:'Gale Force',b:2,c:0,r:4,max:5,fx:{aspd:3,move:2},req:['f5'],d:'+3% attack speed, +2% move speed per rank'},
+  f11:{i:'✚',n:'Scavenger',b:2,c:1,r:4,max:3,fx:{regen:1,gf:5},req:['f7'],d:'+1 life/sec, +5% gold find per rank'},
+  f12:{i:'♦',n:'Jackpot',b:2,c:2,r:4,max:3,fx:{ldrop:4,rune:15},req:['f9'],d:'+4% loot chance, +15% rune drops per rank'},
+  f13:{i:'♚',n:'Kingmaker',b:2,c:1,r:5,max:1,fx:{gf:15,xpf:15},req:['f11','f12'],d:'+15% gold find and XP gain'},
+  b1:{i:'⛊',n:'Toughness',b:3,c:1,r:0,max:5,fx:{hp:20},d:'+20 max life per rank'},
+  b2:{i:'◈',n:'Iron Skin',b:3,c:0,r:1,max:5,fx:{dr:1.5},req:['b1'],d:'+1.5% damage reduction per rank'},
+  b3:{i:'☽',n:'Vampirism',b:3,c:2,r:1,max:5,fx:{ls:.6},req:['b1'],d:'+0.6% life steal per rank'},
+  b4:{i:'❦',n:'Resilience',b:3,c:1,r:1,max:5,fx:{regen:1},req:['b1'],d:'+1 life regenerated per second per rank'},
+  b5:{i:'▣',n:'Bastion',b:3,c:0,r:2,max:3,fx:{hpP:6},req:['b2'],d:'+6% max life per rank'},
+  b6:{i:'☾',n:'Bloodthirst',b:3,c:2,r:2,max:3,fx:{ls:.8,dmgP:3},req:['b3'],d:'+0.8% life steal, +3% damage per rank'},
+  b7:{i:'✿',n:'Rejuvenation',b:3,c:1,r:2,max:3,fx:{regen:2},req:['b4'],d:'+2 life per second per rank'},
+  b9:{i:'⬢',n:'Stoneheart',b:3,c:0,r:3,max:3,fx:{hpP:5,dr:1},req:['b5'],d:'+5% max life, +1% damage reduction per rank'},
+  b8:{i:'♜',n:'Fortress',b:3,c:1,r:3,max:1,flag:'fortress',req:['b7'],d:'+10% damage reduction while above 50% life'},
+  b10:{i:'☩',n:'Sanguine Pact',b:3,c:2,r:3,max:1,flag:'lastStand',req:['b6'],d:'+35% damage while below 35% life'},
+  b12:{i:'⛰',n:'Colossus',b:3,c:0,r:4,max:5,fx:{hpP:4},req:['b9'],d:'+4% max life per rank'},
+  b11:{i:'✠',n:'Unyielding',b:3,c:1,r:4,max:1,flag:'unyield',req:['b8'],d:'Survive a lethal hit once per floor at 25% life'},
+  b13:{i:'◆',n:'Cold Blood',b:3,c:2,r:4,max:5,fx:{crit:2,critD:10},req:['b10'],d:'+2% crit chance, +10% crit damage per rank'},
+  b14:{i:'♾',n:'Immortal',b:3,c:1,r:5,max:3,fx:{dr:2,regen:2,hpP:5},req:['b11'],d:'+2% DR, +2 life/sec, +5% max life per rank'}
 };
-const BRANCH=[{n:'Might',x:10},{n:'Arcana',x:300},{n:'Fortune',x:690}];
+const BRANCH=[{n:'Might',x:10},{n:'Arcana',x:300},{n:'Fortune',x:690},{n:'Bulwark',x:960}];
 const APERK={
   might:{n:'Eternal Might',d:'+8% damage',fx:{dmgP:8},max:30,base:1},
   vit:{n:'Undying Vitality',d:'+8% max life',fx:{hpP:8},max:30,base:1},
   crit:{n:'Predator',d:'+2% crit chance',fx:{crit:2},max:15,base:2},
   fort:{n:'Midas Touch',d:'+10% gold find',fx:{gf:10},max:20,base:1},
   xp:{n:'Quick Study',d:'+10% XP gain',fx:{xpf:10},max:20,base:1},
-  idle:{n:'Clockwork Mind',d:'+15% idle output',fx:{idle:15},max:30,base:1},
   off:{n:'Time Dilation',d:'+2 hours max offline progress',fx:{offline:2},max:10,base:2},
   rune:{n:'Rune Magnet',d:'+25% rune drops',fx:{rune:25},max:10,base:2},
   head:{n:'Delve Memory',d:'Dungeon gate starts 3 floors deeper per rank',max:10,base:2,sp:1},
@@ -343,12 +376,12 @@ const EVENTS=[
   {id:'runes',n:'Rune Storm',d:'Rune drops tripled',c:'#c45dff'},
   {id:'surge',n:'Arcane Surge',d:'+30% attack speed and cooldown reduction',c:'#5affd0'},
   {id:'merchant',n:'Wandering Merchant',d:'Market prices -30%',c:'#7dff9a'},
-  {id:'rift',n:'Void Rift',d:'Secret dimensions appear far more often',c:'#9d7dff'}
 ];
 
 // ============================================================ ITEMS
-function rollRar(boost){
-  boost=boost||0;const w=[60,27,9,3.2,.8].map((v,i)=>v*(1+boost*i*.5));
+function rollRar(boost,f){
+  boost=boost||0;const fl=f==null?((mode==='dun'&&D)?D.f:S.p.maxFloor):f;
+  const w=[72,22,5,.9,fl>=20?.12:0].map((v,i)=>v*(1+boost*i*.35));
   let t=0;for(const v of w)t+=v;let r=Math.random()*t;
   for(let i=0;i<5;i++){r-=w[i];if(r<=0)return i;}return 0;
 }
@@ -356,17 +389,18 @@ function genItem(ilvl,rar,slot){
   ilvl=Math.max(1,Math.floor(ilvl));
   if(rar==null)rar=rollRar((ST&&ST.ldrop)?ST.ldrop/100:0);
   slot=slot||pick(['weapon','weapon','armor','armor','trinket','ring','ring']);
+  const _fl=(mode==='dun'&&D)?D.f:(S?S.p.maxFloor:0);if(rar>=4&&_fl<20)rar=3;
   const base=pick(BASES[slot]);
   const it={id:uid(),slot:slot,base:base.n,rar:rar,ilvl:ilvl,el:null,ln:[],sock:[],leg:null,bd:0,bh:0,bdr:0,wb:null,name:''};
-  if(slot==='weapon'){it.bd=Math.round((3+ilvl*1.7)*base.dmg);it.wb={rate:base.rate,spd:base.spd,pat:base.pat};if(rar>=1&&chance(.65))it.el=pick(['fire','frost','volt','venom']);}
-  if(slot==='armor'){it.bh=Math.round((12+ilvl*5)*base.hp);it.bdr=base.dr;}
+  if(slot==='weapon'){it.bd=Math.round((3+ilvl*1.7)*base.dmg*(1+rar*.12));it.wb={rate:base.rate,spd:base.spd,pat:base.pat};if(rar>=1&&chance(.65))it.el=pick(['fire','frost','volt','venom']);}
+  if(slot==='armor'){it.bh=Math.round((12+ilvl*5)*base.hp*(1+rar*.1));it.bdr=base.dr;}
   const nA=[0,ri(1,2),ri(3,4),ri(4,5),5][rar];
   const pool=PRE.filter(a=>a.s.indexOf(SL[slot])>=0),used={},pre=[],suf=[];
   for(let i=0;i<nA;i++){
     const usePre=i%2===0,src=usePre?pool:SUF;let a,tries=0;
     do{a=pick(src);tries++;}while(used[a.k]&&tries<25);
     if(used[a.k])continue;used[a.k]=1;
-    const v=Math.max(1,Math.round(rnd(a.lo,a.hi)*(1+ilvl*.05)*(1+rar*.06)));
+    const v=Math.max(1,Math.round(rnd(a.lo,a.hi)*(1+ilvl*.035)*(1+rar*.08)));
     it.ln.push({k:a.k,v:v,l:a.l.replace('{v}',v)});(usePre?pre:suf).push(a.n);
   }
   let nm=base.n;
@@ -456,14 +490,14 @@ function lighting(cx,cy,ambient,lights,tint){
 
 // ============================================================ STATE
 let SAVEKEY='ascendia_sv3_guest';
-let S=null,ST={flags:{}},mode='hub',D=null,PL=null,BOTS=[],MARKET=[],PARTY=[];
+let S=null,ST={flags:{}},mode='hub',D=null,PL=null,BOTS=[],MARKET=[],PARTY=[],GUILD=null,PARTYL=null;
 const G={t:0,clock:40,shake:0,slow:1,slowT:0,evt:null,evtT:50,panel:null,dead:0,fade:null,flash:0,near:null,saveT:0,mktT:0,groupT:18,away:0,selId:null,gateF:1,tab:'',confirm:''};
 const cam={x:0,y:0};
 const pl={x:0,y:0,vx:0,vy:0,hp:100,aim:0,inv:0,roll:0,rdx:0,rdy:1,rcd:0,rch:1,fcd:0,cd:{nova:0,ward:0,ult:0},ult:0,pot:3,anim:0,moving:false,rampage:0,frenzy:0,phoenix:true,buff:{},hitT:0,dmgDone:0};
 function starterWeapon(){const it=genItem(1,0,'weapon');it.base='Wand';it.name='Rusty Wand';it.bd=2;it.wb={rate:3.4,spd:520,pat:'single'};it.el=null;it.ln=[];it.sock=[];it.leg=null;return it;}
 function defaults(){
   const p={name:'Wanderer'+ri(10,99),color:pick(['#5affd0','#ff9a5a','#9d7dff','#ff6ac1','#6ab8ff']),lvl:1,xp:0,gold:15,ess:0,inv:[],eq:{},runes:{},tal:{},skills:{},train:'marksman',
-    gen:{mine:0,well:0,forge:0,scribe:0},forgeT:0,maxFloor:0,runMax:0,bestEver:0,kills:0,trials:0,bosses:0,deaths:0,ascs:0,ap:0,perks:{},art:{},play:0,items:0,legs:0};
+    gen:{mine:0,well:0,forge:0,scribe:0},forgeT:0,maxFloor:0,runMax:0,bestEver:0,kills:0,trials:0,bosses:0,deaths:0,ascs:0,ap:0,perks:{},art:{},play:0,items:0,legs:0,tutDone:false};
   for(const k in PASS)p.skills[k]={l:1,x:0};
   p.eq.weapon=starterWeapon();
   return{v:3,t:Date.now(),p:p,quests:[],qDone:0,set:{autoSell:0,mute:false},seen:false};
@@ -476,7 +510,7 @@ function load(){
 function save(){S.t=Date.now();try{localStorage.setItem(SAVEKEY,JSON.stringify(S));}catch(e){}netCloudSave();}
 
 // ============================================================ STATS
-const xpNeed=l=>Math.round(40*Math.pow(l,1.55));
+const xpNeed=l=>Math.round(60*Math.pow(l,1.75));
 const skNeed=l=>Math.round(20*Math.pow(1.22,l));
 function talPoints(){const P=S.p;let sp=0;for(const k in P.tal)sp+=P.tal[k];return{total:P.lvl-1,spent:sp,free:P.lvl-1-sp};}
 function recalc(){
@@ -494,6 +528,7 @@ function recalc(){
   for(const id in P.perks)if(APERK[id])fx(APERK[id],P.perks[id]);
   for(const id in P.art)if(ARTS[id])fx(ARTS[id],P.art[id]);
   for(const id in P.skills)if(PASS[id])s[PASS[id].k]+=PASS[id].v*(P.skills[id].l-1);
+  if(GUILD){const gp=Math.min(10,GUILD.members.length);s.xpf+=gp;s.gf+=gp;}
   s.maxhp=Math.round(s.hp*(1+s.hpP/100));
   s.cdr=Math.min(s.cdr,60);s.dr=Math.min(s.dr,75);s.crit=Math.min(s.crit,80);s.ls=Math.min(s.ls,25);
   s.dodgeC=Math.floor(s.dodgeC);s.potion=Math.floor(s.potion);
@@ -506,7 +541,7 @@ let bannerTO=0;
 function showBanner(t,sub,col,dur){const b=$('banner');b.style.color=col||'#fff';b.innerHTML=esc(t)+(sub?'<small>'+esc(sub)+'</small>':'');b.classList.add('show');clearTimeout(bannerTO);bannerTO=setTimeout(()=>b.classList.remove('show'),dur||3200);}
 function addGold(n,quiet){S.p.gold+=n;if(!quiet&&mode==='dun')qEvent('gold',n);}
 function gainXP(n,idle){
-  const P=S.p;n*=1+(ST.xpf||0)/100;if(!idle)n*=1+PARTY.length*.1+(mode==='dun'?dunPeers().length*.15:0);
+  const P=S.p;n*=1+(ST.xpf||0)/100;if(!idle)n*=1+PARTYR.length*.1+(mode==='dun'?dunPeers().length*.15:0);
   P.xp+=n;let lv=false;
   while(P.lvl<100&&P.xp>=xpNeed(P.lvl)){P.xp-=xpNeed(P.lvl);P.lvl++;lv=true;}
   if(P.lvl>=100)P.xp=0;
@@ -535,47 +570,6 @@ function giveItem(it,quiet){
 function addRune(t,tier,n){const k=t+':'+tier;S.p.runes[k]=(S.p.runes[k]||0)+(n||1);}
 function dropRuneAt(tier){return{t:pick(RUNEKEYS),tier:tier};}
 
-// ============================================================ IDLE SYSTEMS
-const GENDEF={
-  mine:{n:'Gold Mine',base:50,mult:1.17,d:l=>'+'+fmt(l*(2+l*.08)*(1+ST.idle/100))+' gold/sec'},
-  well:{n:'Essence Well',base:120,mult:1.19,d:l=>'+'+(l*(.25+l*.02)*(1+ST.idle/100)).toFixed(1)+' essence/sec'},
-  forge:{n:'Auto-Forge',base:200,mult:1.22,d:l=>l>0?'crafts gear every '+Math.max(2.5,40*Math.pow(.93,l)).toFixed(1)+'s':'crafts gear automatically'},
-  scribe:{n:'Scribe Circle',base:150,mult:1.2,d:l=>'+'+fmt(l*(1.5+S.p.lvl*.15)*(1+ST.idle/100))+' XP/sec · +'+Math.round(l*80)+'% skill training'}
-};
-const genCost=(id,l)=>Math.round(GENDEF[id].base*Math.pow(GENDEF[id].mult,l));
-function idleRates(){
-  const P=S.p,g=P.gen,m=1+(ST.idle||0)/100;
-  return{gold:g.mine*(2+g.mine*.08)*m,ess:g.well*(.25+g.well*.02)*m,xp:g.scribe*(1.5+P.lvl*.15)*m,forge:g.forge>0?Math.max(2.5,40*Math.pow(.93,g.forge)):0,skill:(2+g.scribe*1.6)*m};
-}
-function forgeItem(){
-  const P=S.p;const il=Math.max(1,Math.floor(P.maxFloor*1.5+P.gen.forge*.4+P.lvl*.3));
-  giveItem(genItem(il,rollRar(P.gen.forge*.02+.2)),true);
-}
-function idleTick(dt){
-  const P=S.p,r=idleRates();
-  P.gold+=r.gold*dt;P.ess+=r.ess*dt;if(r.xp>0)gainXP(r.xp*dt,true);
-  const sk=P.skills[P.train];
-  if(sk&&sk.l<99){
-    sk.x+=r.skill*dt;let up=false;
-    while(sk.x>=skNeed(sk.l)&&sk.l<99){sk.x-=skNeed(sk.l);sk.l++;up=true;}
-    if(up){recalc();toast(PASS[P.train].n+' reached level '+sk.l);}
-  }
-  if(P.gen.forge>0){P.forgeT+=dt;let n=0;while(P.forgeT>=r.forge&&n<30){P.forgeT-=r.forge;n++;forgeItem();}if(n>=30)P.forgeT=0;}
-}
-function offlineProgress(){
-  const P=S.p;let dt=(Date.now()-S.t)/1000;if(!(dt>45))return;
-  dt=Math.min(dt,(8+(ST.offline||0))*3600);
-  const g0=P.gold,e0=P.ess,l0=P.lvl,r=idleRates();
-  P.gold+=r.gold*dt;P.ess+=r.ess*dt;if(r.xp>0)gainXP(r.xp*dt,true);
-  const sk=P.skills[P.train];let sl=0;
-  if(sk&&sk.l<99){sk.x+=r.skill*dt;while(sk.x>=skNeed(sk.l)&&sk.l<99){sk.x-=skNeed(sk.l);sk.l++;sl++;}}
-  let n=0;if(P.gen.forge>0){const k=Math.min(40,Math.floor(dt/r.forge));for(let i=0;i<k;i++){forgeItem();n++;}}
-  recalc();
-  const mins=Math.round(dt/60);
-  const msg='Welcome back! '+(mins>=120?Math.round(mins/60)+'h':mins+'m')+' away: +'+fmt(P.gold-g0)+' gold, +'+fmt(P.ess-e0)+' essence'+(P.lvl>l0?', +'+(P.lvl-l0)+' levels':'')+(sl?', +'+sl+' skill lvls':'')+(n?', '+n+' items forged':'');
-  chat('System','',msg);setTimeout(()=>toast(msg),600);
-}
-
 // ============================================================ EVENTS / QUESTS / MARKET / ASCENSION
 function tickEvents(dt){
   if(G.evt){G.evt.left-=dt;if(G.evt.left<=0){chat('System','',G.evt.n+' has ended.');G.evt=null;G.evtT=rnd(100,220);}}
@@ -583,7 +577,7 @@ function tickEvents(dt){
 }
 const QPLACE=['the Hollow Crypt','Emberdeep','Frostmere','the Whispering Ruins','Stormspire','the Gloaming','Ashen Vale','Starfall Keep'];
 function genQuest(){
-  const P=S.p,ref=Math.max(1,P.maxFloor);const type=pick(['kill','kill','killel','floor','trial','loot','boss','gold']);
+  const P=S.p,ref=Math.max(1,P.maxFloor);const type=pick(['kill','kill','killel','floor','loot','boss','gold']);
   const q={id:uid(),type:type,have:0,done:false,n:1,d:''};
   switch(type){
     case'kill':q.n=ri(30,60)+ref*5;q.d='Slay '+q.n+' monsters';break;
@@ -595,7 +589,7 @@ function genQuest(){
     default:q.n=Math.round((200+ref*150)*ri(1,3));q.d='Collect '+q.n+' gold in dungeons';
   }
   q.name=pick(['Purge','Hunt','Delve','Culling','Pilgrimage','Reckoning','Vigil'])+' of '+pick(QPLACE);
-  const m=1+ref*.35;q.rew={gold:Math.round(rnd(80,200)*m*3),ess:Math.round(rnd(5,20)*m),xp:Math.round(rnd(60,150)*m*2),rune:chance(.5),item:chance(.35)?ri(1,3):null};
+  const m=1+ref*.35;q.rew={gold:Math.round(rnd(80,200)*m*1.8),ess:Math.round(rnd(5,20)*m),xp:Math.round(rnd(60,150)*m*2),rune:chance(.5),item:chance(.35)?ri(1,3):null};
   return q;
 }
 function ensureQuests(){while(S.quests.length<4)S.quests.push(genQuest());}
@@ -620,10 +614,10 @@ function refreshMarket(){
   const P=S.p,base=Math.max(1,P.maxFloor*1.4+P.lvl*.5);MARKET=[];
   const n=ev('merchant')?12:9;
   for(let i=0;i<n;i++){
-    const it=genItem(base+ri(-2,3),rollRar(.35));
-    MARKET.push({id:uid(),seller:BOTS.length?pick(BOTS).name:'Trader',it:it,price:Math.round(itemVal(it)*rnd(1.2,1.7))});
+    const it=genItem(base+ri(-2,3),rollRar(.12));
+    MARKET.push({id:uid(),seller:'Merchant',it:it,price:Math.round(itemVal(it)*rnd(2.2,3.2))});
   }
-  for(let i=0;i<3;i++){const t=pick(RUNEKEYS),tier=1+Math.floor(P.maxFloor/9)+(chance(.3)?1:0);MARKET.push({id:uid(),seller:pick(BOTS).name,rune:{t:t,tier:Math.min(5,tier)},price:Math.round(60*Math.pow(2.6,Math.min(5,tier)-1)*rnd(.9,1.3))});}
+  for(let i=0;i<3;i++){const t=pick(RUNEKEYS),tier=1+Math.floor(P.maxFloor/9)+(chance(.3)?1:0);MARKET.push({id:uid(),seller:'Merchant',rune:{t:t,tier:Math.min(5,tier)},price:Math.round(60*Math.pow(2.6,Math.min(5,tier)-1)*rnd(.9,1.3))});}
 }
 function canAscend(){return S.p.runMax>=8||S.p.lvl>=30;}
 function apGain(){const P=S.p;return Math.max(1,Math.floor(Math.pow(Math.max(0,P.runMax),1.3)/2.5+P.lvl/10));}
@@ -645,7 +639,7 @@ function doAscend(){
 
 // ============================================================ CHAT / BOTS (simulated MMO)
 const chatEl=$('chatlog'),chatIn=$('chatin');
-const CHC={World:'#8fb4ff',Trade:'#ffcf6a',Party:'#7dff9a',System:'#ffffff',Loot:'#ff9a3a',Whisper:'#ff8aff'};
+const CHC={World:'#8fb4ff',Trade:'#ffcf6a',Party:'#7dff9a',System:'#ffffff',Loot:'#ff9a3a',Whisper:'#ff8aff',Guild:'#7de0ff'};
 function chat(ch,who,msg,col){
   const d=document.createElement('div');
   d.innerHTML='<span style="color:'+(CHC[ch]||'#fff')+'">['+ch+']</span> '+(who?'<b style="color:'+(col||'#cfe')+'">'+esc(who)+'</b>: ':'')+'<span style="color:'+((ch==='System'||ch==='Loot')?CHC[ch]:'#dde')+'">'+esc(msg)+'</span>';
@@ -656,111 +650,121 @@ function closeChat(){typing=false;chatIn.style.display='none';chatIn.blur();$('c
 function sendChat(){
   const v=chatIn.value.trim();closeChat();if(!v)return;
   if(v[0]==='/'){chatCmd(v);return;}
-  chat('World',S.p.name,v,S.p.color);netChat(v);botReply(v);
+  chat('World',S.p.name,v,S.p.color);netChat(v);
 }
-function chatCmd(v){
-  const parts=v.slice(1).split(' '),c=parts.shift().toLowerCase(),arg=parts.join(' ').trim();
-  if(c==='name'&&arg){S.p.name=arg.slice(0,16);chat('System','','Name set to '+S.p.name);}
-  else if(c==='color'&&/^#[0-9a-f]{6}$/i.test(arg)){S.p.color=arg;chat('System','','Color updated.');}
-  else if(c==='save'){save();chat('System','','Game saved.');}
-  else if(c==='mute'){S.set.mute=!S.set.mute;chat('System','','Sound '+(S.set.mute?'off':'on')+'.');}
-  else if(c==='who'){chat('System','','Online: '+(BOTS.length+1)+' players — '+BOTS.filter(b=>b.state==='away').length+' in dungeons.');}
-  else if(c==='w'||c==='whisper'){const sp=arg.indexOf(' ');if(sp<1)chat('System','','Usage: /w <player> <message>');else netWhisper(arg.slice(0,sp),arg.slice(sp+1));}
-  else if(c==='leave'){partyLeaveAll();}
-  else if(c==='players'){const l=peerList().map(p=>p.name);chat('System','','Real players online: '+(l.length?l.join(', '):'none besides you'));}
-  else chat('System','','Commands: /w <player> <msg>  /players  /leave (party)  /name  /color #rrggbb  /save  /mute  /who  ·  H for help');
+const sys=m=>chat('System','',m);
+function gsend(o){if(NET.mode!=='server'||!NET.ws||NET.ws.readyState!==1||ACC.guest){sys('Guilds need a logged-in account on a realm server (node server.js).');return false;}try{NET.ws.send(JSON.stringify(o));}catch(e){}return true;}
+function guildOp(o){return gsend(Object.assign({t:'g'},o));}
+function needLead(){if(PARTYL){sys('Only the party leader can do that.');return false;}return true;}
+function partyKick(n){if(!needLead())return;const p=findPeer(n);if(!p||PARTYR.indexOf(p.id)<0)return sys('"'+n+'" is not in your party.');partyDrop(p.id);}
+function partyPromote(n){if(!needLead())return;const p=findPeer(n);if(!p||PARTYR.indexOf(p.id)<0)return sys('"'+n+'" is not in your party.');const all=PARTYR.concat([NET.id]);for(const id of PARTYR)netSend({t:'lead',to:id,nl:p.id,all:all});PARTYL=p.id;PARTYR.length=0;PARTYR.push(p.id);chat('Party','',p.name+' is now the party leader.');}
+function netDecline(){if(invReq){invReq=null;sys('Party invite declined.');}}
+function partyChat(v){if(!PARTYR.length)return sys('You are not in a party.');for(const id of PARTYR)netSend({t:'chat',ch:'Party',to:id,name:S.p.name,color:S.p.color,msg:v});chat('Party',S.p.name,v,S.p.color);}
+function partyCmd(a){const p=a.split(' '),sub=(p.shift()||'list').toLowerCase(),r=p.join(' ').trim();
+  if(sub==='invite'){const q=findPeer(r);if(!r||!q)return sys('Usage: /party invite <player> (they must be online).');netInvite(q.id);}
+  else if(sub==='accept')netAccept();else if(sub==='decline')netDecline();
+  else if(sub==='kick')partyKick(r);else if(sub==='promote')partyPromote(r);
+  else if(sub==='leave'||sub==='disband')partyLeaveAll();
+  else if(sub==='list'){if(!PARTYR.length)return sys('You are not in a party.');sys('Party: '+(PARTYL?'':'you (leader), ')+PARTYR.map(id=>{const q=NET.peers[id];return(q?q.name:'?')+(id===PARTYL?' (leader)':'');}).join(', '));}
+  else sys('/party invite|accept|decline|kick|promote|leave|disband|list');}
+function guildCmd(a){const p=a.split(' '),sub=(p.shift()||'info').toLowerCase(),r=p.join(' ').trim();
+  if(['create','invite','kick','promote','demote'].indexOf(sub)>=0){if(!r)return sys('Usage: /guild '+sub+' <'+(sub==='create'?'name':'player')+'>');guildOp({op:sub,name:r});}
+  else if(sub==='motd')guildOp({op:'motd',text:r});
+  else if(['accept','decline','leave','disband','info'].indexOf(sub)>=0){if(sub==='info')G.ginfoSay=1;guildOp({op:sub});}
+  else sys('/guild create|invite|accept|decline|leave|kick|promote|demote|motd|disband|info — chat with /g');}
+const ALIAS={players:'who',whisper:'w',retreat:'leave',hub:'leave',exit:'leave',descend:'dungeon',inv:'invite',p:'party',gc:'g',guildchat:'g',partychat:'pc',unstuck:'stuck'};
+const CMDS={
+  help(){sys('Dungeon: /leave /stuck /pot /floor /dungeon <n> · Gear: /stats /sort /sell <common|magic|rare> /autosell <none|common|magic|rare> · Social: /w /who /top /party /pc /guild /g · Other: /name /color /save /mute /clear /time /seed /tutorial /skip');},
+  name(a){if(!a)return sys('Usage: /name <name>');S.p.name=a.slice(0,16);sys('Name set to '+S.p.name);},
+  color(a){if(!/^#[0-9a-f]{6}$/i.test(a))return sys('Usage: /color #rrggbb');S.p.color=a;sys('Color updated.');},
+  save(){save();sys('Game saved.');},
+  mute(){S.set.mute=!S.set.mute;sys('Sound '+(S.set.mute?'off':'on')+'.');},
+  clear(){chatEl.innerHTML='';},
+  time(){sys('Play time: '+Math.floor(S.p.play/3600)+'h '+Math.floor(S.p.play/60)%60+'m.');},
+  seed(){sys(mode==='dun'?'Run seed '+(G.runSeed>>>0)+' · floor '+D.f:'You are not in a dungeon.');},
+  who(){const l=peerList().map(p=>p.name);sys('Online: you'+(l.length?', '+l.join(', '):' (nobody else)'));},
+  w(a){const i=a.indexOf(' ');if(i<1)sys('Usage: /w <player> <message>');else netWhisper(a.slice(0,i),a.slice(i+1));},
+  top(){const l=peerList().map(p=>({n:p.name,f:p.fl||0,l:p.lvl})).concat([{n:S.p.name,f:S.p.bestEver,l:S.p.lvl}]).sort((x,y)=>y.f*100+y.l-(x.f*100+x.l)).slice(0,5);sys('Top: '+l.map((e,i)=>'#'+(i+1)+' '+e.n+' (floor '+e.f+', Lv '+e.l+')').join(' · '));},
+  stats(){sys('Life '+ST.maxhp+' · Damage '+Math.round(ST.dmg*(1+ST.dmgP/100))+' · Crit '+ST.crit.toFixed(0)+'%/+'+ST.critD.toFixed(0)+'% · DR '+ST.dr.toFixed(0)+'% · Life steal '+ST.ls.toFixed(0)+'% · Best floor '+S.p.bestEver);},
+  floor(){if(mode==='dun'&&D)sys((D.f?'Floor '+D.f:'Tutorial')+' — '+D.biome.n+' · kills '+D.kills+' · '+D.enemies.filter(e=>!e.dead).length+' enemies left.');else sys('Deepest floor: '+S.p.maxFloor);},
+  leave(){if(mode!=='dun'||!D)return sys('You are not in a dungeon. (/party leave leaves a party.)');if(G.dead>0||G.fade)return;if(D.f===0)endTutorial(false);else exitDungeon(false);},
+  stuck(){if(mode!=='dun'||!D)return sys('Only works in a dungeon.');pl.x=D.start.x;pl.y=D.start.y;pl.inv=2;sys('Moved to the floor entrance.');},
+  pot(){if(mode==='dun')pressed.f=true;else sys('Potions only work in dungeons.');},
+  dungeon(a){if(mode!=='hub')return sys('Return to town first (/leave).');if(!needLead()||G.fade)return;const f=clamp(parseInt(a)||S.p.maxFloor+1,1,S.p.maxFloor+1);closePanel();startDungeon(f);},
+  sort(){S.p.inv.sort((x,y)=>y.rar-x.rar||y.ilvl-x.ilvl);sys('Backpack sorted.');},
+  sell(a){const i=['common','magic','rare'].indexOf(a.toLowerCase());if(i<0)return sys('Usage: /sell <common|magic|rare> (sells that rarity and below)');let g=0,n=0;S.p.inv=S.p.inv.filter(it=>{if(it.rar<=i){g+=sellVal(it);n++;return false;}return true;});S.p.gold+=g;sys('Sold '+n+' items for '+fmt(g)+' gold.');},
+  autosell(a){const i={none:-1,common:0,magic:1,rare:2}[a.toLowerCase()];if(i==null)return sys('Usage: /autosell <none|common|magic|rare>');S.set.autoSell=i;sys('Auto-sell set to '+a.toLowerCase()+'.');},
+  party(a){partyCmd(a);},invite(a){partyCmd('invite '+a);},kick(a){partyKick(a);},pc(a){if(a)partyChat(a);},
+  accept(){if(invReq)netAccept();else guildOp({op:'accept'});},decline(){if(invReq)netDecline();else guildOp({op:'decline'});},
+  guild(a){guildCmd(a);},g(a){if(a)gsend({t:'gchat',msg:a});},
+  tutorial(){if(mode!=='hub')return sys('Return to town first.');if(!G.fade)transition(()=>startTutorial());},
+  skip(){if(G.tut)endTutorial(false);else sys('You are not in the tutorial.');}
+};
+function chatCmd(v){const p=v.slice(1).split(' '),c0=(p.shift()||'').toLowerCase(),c=ALIAS[c0]||c0,arg=p.join(' ').trim(),f=CMDS[c];if(f)f(arg);else sys('Unknown command /'+c0+'. Type /help.');}
+
+// ============================================================ TUTORIAL
+const TUT=[
+  {s:'Welcome, Echo-walker. I am Warden Eira. Walk to the beacon with W A S D.',tg:()=>D.tut.b1,c:()=>Math.hypot(pl.x-D.tut.b1.x,pl.y-D.tut.b1.y)<70},
+  {s:'Hold the left mouse button to shoot. Aim with the cursor and destroy the training dummy.',tg:()=>D.tut.dummy,c:()=>D.tut.dummy.dead},
+  {s:'Press SPACE to roll. You cannot be hit mid-roll, so roll through danger rather than away from it.',ev:'roll'},
+  {s:'Right-click casts Nova, a ring of bolts. It recharges slowly, so save it for crowds.',ev:'nova'},
+  {s:'Press Q for Ward Pulse. It erases nearby bullets and shoves enemies away. Use it when the screen fills up.',ev:'ward'},
+  {s:'Enemies ahead. Archers fire bullets: keep moving, weave through the shots and clear the room.',tg:()=>D.tut.foes.find(e=>!e.dead)||D.tut.b2,c:()=>D.tut.foes.every(e=>e.dead)},
+  {s:'Well fought. Open the chest with E. Gear drops from chests, enemies and bosses.',tg:()=>D.tut.chest,ev:'chest'},
+  {s:'Press I to open your inventory.',ev:'open_inv'},
+  {s:'Click the new weapon, then press Equip. Better gear is how you grow stronger.',ev:'equip'},
+  {s:'Press T to open the talent tree. You earn a point every level, and four branches compete for them.',pre:()=>{if(!S.p.tutDone)gainXP(xpNeed(S.p.lvl));},ev:'open_tal'},
+  {s:'The exit is open. Step on it and press E. In town, the Dungeon Portal leads to floor 1, and party leaders pull their whole party in. Good luck!',pre:()=>{D.exit.active=true;},tg:()=>D.exit}
+];
+function tutSay(){const st=TUT[G.tut.i];$('dlg').style.display=st?'block':'none';if(st){$('dlgt').textContent=st.s;if(st.pre)st.pre();}}
+function tutNext(){if(!G.tut)return;G.tut.i++;sfx('loot');closePanel();tutSay();}
+function tutEvt(n){if(!G.tut||!D||D.f!==0||G.tut.lock)return;const st=TUT[G.tut.i];if(st&&st.ev===n){G.tut.lock=1;setTimeout(()=>{if(!G.tut)return;G.tut.lock=0;if(TUT[G.tut.i]===st)tutNext();},450);}}
+function tutTick(){if(!G.tut||mode!=='dun'||!D||D.f!==0||G.tut.lock)return;const st=TUT[G.tut.i];if(st&&st.c&&st.c())tutNext();}
+function startTutorial(){G.tut={i:0,lock:0};G.runSeed=0;mode='dun';buildFloor(0,true);tutSay();}
+function endTutorial(done){
+  const P=S.p;P.tutDone=true;S.seen=true;G.tut=null;$('dlg').style.display='none';
+  if(done){P.gold+=50;chat('System','','Tutorial complete! +50 gold. Press E at the Dungeon Portal to begin floor 1.');showBanner('Training complete','The dungeon awaits','#e9b44c',3000);}
+  else chat('System','','Tutorial skipped. Type /tutorial in town to replay it.');
+  if(mode==='dun'&&D&&D.f===0)transition(()=>{enterHubAt(1100,330);recalc();pl.hp=ST.maxhp;save();});
 }
-const SYL1=['Ka','Zer','Mor','Lyn','Thal','Vex','Jor','Ae','Bri','Cal','Dra','Eld','Fen','Gor','Hal','Ish','Kor','Lum','Nyx','Oro','Pyr','Quin','Rav','Sil','Tor','Uld','Vor','Wyn','Xan','Yor','Zul'];
-const SYL2=['dan','lis','gar','mir','ron','tis','vok','wen','xor','zan','thor','ric','nia','lex','dor','mon','sa','ko'];
-const BOTCLS=[{n:'Mage',c:'#9d7dff'},{n:'Ranger',c:'#6aff8a'},{n:'Warrior',c:'#ff7a5a'},{n:'Rogue',c:'#ffd24a'},{n:'Cleric',c:'#7ad7ff'},{n:'Warlock',c:'#e05aff'}];
-function botName(){let n=pick(SYL1)+pick(SYL2);if(chance(.25))n+=ri(1,99);if(chance(.08))n='xX'+n+'Xx';return n[0].toUpperCase()+n.slice(1);}
-function randHubSpot(){
-  for(let i=0;i<30;i++){const a=Math.random()*TAU,r=rnd(60,520),x=1100+Math.cos(a)*r*1.5,y=720+Math.sin(a)*r*.9;if(!hubBlocked(x,y,14))return{x:x,y:y};}
-  return{x:1100,y:700};
+$('dlgs').onclick=()=>endTutorial(false);
+function genTutorialFloor(){
+  const w=64,h=24,g=new Uint8Array(w*h),T=TS,car=(x,y,rw,rh)=>{for(let j=y;j<y+rh;j++)for(let i=x;i<x+rw;i++)g[j*w+i]=1;};
+  const R=[[3,6,12,12],[19,6,14,12],[37,6,12,12],[53,6,8,12]];
+  R.forEach(r=>car(r[0],r[1],r[2],r[3]));
+  for(let i=0;i<3;i++){const a=R[i],b=R[i+1];car(a[0]+a[2],11,b[0]-a[0]-a[2],3);}
+  const rooms=R.map(r=>({x:r[0],y:r[1],w:r[2],h:r[3],cx:r[0]+r[2]/2,cy:r[1]+r[3]/2})),c=i=>({x:rooms[i].cx*T,y:rooms[i].cy*T});
+  const col={f:['hsl(200,28%,15%)','hsl(200,28%,17%)','hsl(200,26%,14%)','hsl(200,30%,16%)'],l:'hsla(200,40%,40%,.10)',w:'hsl(200,25%,7%)',wf:'hsl(200,30%,19%)',wl:'hsl(200,45%,32%)'};
+  const nd={f:0,w:w,h:h,g:g,exp:new Uint8Array(w*h),vr:new Uint8Array(w*h),col:col,rooms:rooms,biome:{n:'Training Grounds',h:200,el:['phys']},boss:false,enemies:[],pickups:[],torches:[],chests:[],shrines:[],eb:[],pb:[],zones:[],exit:{x:c(3).x,y:c(3).y,active:false},portal:null,t:0,bossObj:null,start:{x:c(0).x-120,y:c(0).y},kills:0,bossDead:false,seed:1,sidn:0,bySid:{},rs:0};
+  rooms.forEach(rm=>{for(let k=0;k<2;k++)nd.torches.push({x:(rm.x+2+k*(rm.w-4))*T,y:rm.y*T+T*.55,ph:k*2});});
+  D=nd;
+  const mk=(t,x,y,hp)=>{const e=spawnEnemy(1,x,y,t);e.elite=false;e.aff=null;e.shield=0;e.max=e.hp=hp;e.dmg=3;e.xp=12;e.r=ARCH[t].r;return e;};
+  const dummy=mk('grunt',c(0).x+130,c(0).y-90,40);dummy.tdummy=true;dummy.dmg=0;
+  const foes=[mk('grunt',c(1).x-60,c(1).y-60,18),mk('grunt',c(1).x+60,c(1).y+60,18),mk('archer',c(1).x+120,c(1).y-70,22),mk('archer',c(1).x+120,c(1).y+70,22)];
+  nd.chests.push({x:c(2).x,y:c(2).y,open:false});
+  nd.tut={b1:{x:(rooms[0].x+rooms[0].w-2)*T,y:c(0).y},dummy:dummy,foes:foes,chest:nd.chests[0],b2:c(1)};
+  return nd;
 }
-function makeBot(){
-  const cls=pick(BOTCLS),p=randHubSpot();
-  return{id:uid(),name:botName(),cls:cls,lvl:ri(1,45),floor:ri(1,28),x:p.x,y:p.y,tx:p.x,ty:p.y,spd:rnd(70,105),state:'idle',timer:rnd(1,10),say:'',sayT:0,away:0,inParty:false,anim:Math.random()*10,col:cls.c,face:0,moving:false,chatT:rnd(4,40),cd:0};
+function drawTutArrow(){
+  if(!G.tut||!D||D.f!==0)return;const st=TUT[G.tut.i];if(!st||!st.tg)return;const t=st.tg();if(!t)return;
+  const sx=t.x-cam.x,sy=t.y-cam.y-30,m=60,inx=sx>m&&sx<W-m&&sy>m&&sy<H-m;
+  ctx.save();ctx.fillStyle='#e9b44c';ctx.strokeStyle='#000';ctx.lineWidth=3;
+  if(inx){ctx.translate(sx,sy-26+Math.sin(G.t*6)*7);ctx.beginPath();ctx.moveTo(0,16);ctx.lineTo(-14,-6);ctx.lineTo(-5,-6);ctx.lineTo(-5,-20);ctx.lineTo(5,-20);ctx.lineTo(5,-6);ctx.lineTo(14,-6);ctx.closePath();}
+  else{const a=Math.atan2(sy-H/2,sx-W/2);ctx.translate(clamp(W/2+Math.cos(a)*W,m,W-m),clamp(H/2+Math.sin(a)*H,m,H-m));ctx.rotate(a);ctx.beginPath();ctx.moveTo(18,0);ctx.lineTo(-10,-13);ctx.lineTo(-4,0);ctx.lineTo(-10,13);ctx.closePath();}
+  ctx.stroke();ctx.fill();ctx.restore();
 }
-function botSay(b){
-  const P=S.p,t=Math.random();let ch='World',m;
-  if(G.evt&&chance(.25))m=pick([G.evt.n+' is live, get in there!','anyone farming during '+G.evt.n+'?','this '+G.evt.n+' is wild']);
-  else if(t<.2){ch='Trade';m=pick(['WTS '+pick(['Epic','Rare','Legendary'])+' '+pick(['wand','bow','staff','ring','plate'])+' '+ri(2,90)*100+'g','WTB runes tier '+ri(1,4)+', paying well','selling fused '+pick(['Ember','Rime','Volt','Blight'])+' runes cheap','LF essence bundles, whisper me','check the market stall, new stock!']);}
-  else if(t<.45)m=pick(['LFG floor '+b.floor+' boss run, need dps','anyone doing the trial gate? need pointers on the spikes','just hit lvl '+b.lvl+'!','this '+pick(BIOMES).n+' boss pattern is cruel','pro tip: dodge roll THROUGH the spiral, not away from it','who else is grinding '+pick(['Marksmanship','Meditation','Alchemy'])+' idle?','ascended '+ri(1,5)+' times, totally worth it','is Void Rift up yet?','fire into chill = Steam, frost into burn = Shatter']);
-  else if(t<.7)m=pick(['lol','gg','o/','brb forge','nice gear','this realm is so alive','my idle gold is insane rn','rip my hp bar','finally dropped a legendary!!','the platformer trials are brutal','anyone need a heal?']);
-  else m=pick(['hello '+P.name+'!','nice build '+P.name,'o/ '+P.name,'ayy '+P.name+' wanna party?','how deep are you '+P.name+'?']);
-  chat(ch,b.name,m,b.col);b.say=m.length>34?m.slice(0,32)+'…':m;b.sayT=4.5;
-}
-function botReply(msg){
-  const m=msg.toLowerCase(),cands=BOTS.filter(b=>b.state!=='away');if(!cands.length||!chance(.75))return;
-  const b=pick(cands);let r;
-  if(/lfg|party|group|invite/.test(m))r=pick(['inv me, press P and invite!','sure, which floor?','I can tank the first boss','need healer? I got you']);
-  else if(/wts|wtb|sell|buy|trade|price/.test(m))r=pick(['check the market stall (M)','prices are crazy today','I buy runes if you have any','whisper me an offer']);
-  else if(/hi|hello|hey|yo|sup/.test(m))r=pick(['o/','hey '+S.p.name+'!','hello hello','sup']);
-  else if(/help|how|\?/.test(m))r=pick(['read the help screen, H','talents are at the shrine (T)','idle forge makes gear while you are offline','dodge roll has i-frames, use it','socket runes at the inventory (I)']);
-  else r=pick(['lol','true','haha','nice','indeed','same','ikr','^','gl on your run']);
-  setTimeout(()=>{if(S)chat('World',b.name,r,b.col);b.say=r;b.sayT=4;},rnd(900,2600));
-}
-function followPlayer(b,dt){
-  const idx=PARTY.indexOf(b),ox=idx===0?-34:34,oy=36,tx=pl.x+ox,ty=pl.y+oy,d=Math.hypot(tx-b.x,ty-b.y);
-  if(d>10){const s=Math.min(d*4,240)*dt;b.x+=(tx-b.x)/d*s;b.y+=(ty-b.y)/d*s;b.moving=true;b.face=Math.atan2(ty-b.y,tx-b.x);}else b.moving=false;
-}
-function botMove(b,dt){
-  const d=Math.hypot(b.tx-b.x,b.ty-b.y);if(d<6){b.moving=false;return true;}
-  const dx=(b.tx-b.x)/d*b.spd*dt,dy=(b.ty-b.y)/d*b.spd*dt;let mv=false;
-  if(!hubBlocked(b.x+dx,b.y,10)){b.x+=dx;mv=true;}if(!hubBlocked(b.x,b.y+dy,10)){b.y+=dy;mv=true;}
-  b.moving=mv;b.face=Math.atan2(dy,dx);if(!mv){b.tx=b.x;b.ty=b.y;}return false;
-}
-function updBots(dt){
-  let away=0;
-  for(const b of BOTS){
-    b.anim+=dt;b.sayT=Math.max(0,b.sayT-dt);
-    if(b.state==='away'){away++;b.away-=dt;if(b.away<=0)botReturn(b);continue;}
-    if(b.inParty){if(mode==='hub')followPlayer(b,dt);continue;}
-    b.chatT-=dt;if(b.chatT<=0){b.chatT=rnd(16,55);botSay(b);}
-    if(b.state==='gather'){
-      b.timer-=dt;const arrived=botMove(b,dt);
-      if(arrived||b.timer<=0){b.state='away';b.away=rnd(35,95);chat('World',b.name,'entering floor '+b.floor+', wish me luck!',b.col);}
-      continue;
-    }
-    if(botMove(b,dt)){b.timer-=dt;if(b.timer<=0){const p=randHubSpot();b.tx=p.x;b.ty=p.y;b.timer=rnd(1.5,9);}}
-  }
-  G.away=away;
-  G.groupT-=dt;if(G.groupT<=0){G.groupT=rnd(16,40);formGroup();}
-}
-function formGroup(){
-  const idle=BOTS.filter(b=>b.state==='idle'&&!b.inParty);if(idle.length<2)return;
-  const n=Math.min(idle.length,ri(2,3)),grp=[];
-  for(let i=0;i<n;i++){const k=ri(0,idle.length-1);grp.push(idle.splice(k,1)[0]);}
-  const f=grp[0].floor;
-  chat('World',grp[0].name,'LFG floor '+f+' — '+grp.length+' of us heading in!',grp[0].col);
-  for(const b of grp){b.state='gather';b.tx=1100+rnd(-70,70);b.ty=340+rnd(-30,30);b.timer=14;}
-}
-function botReturn(b){
-  b.state='idle';b.x=1100+rnd(-50,50);b.y=330;b.tx=b.x;b.ty=b.y+rnd(60,200);b.timer=2;
-  if(chance(.5))b.floor++;if(chance(.4))b.lvl++;
-  const m=pick(['cleared floor '+b.floor+'!','boss down. got a '+pick(['Rare','Epic','Legendary'])+' drop!','we wiped on the spiral phase...','+'+ri(100,900)+' gold lol','that Void Rift trial was cruel','one more run?']);
-  chat('World',b.name,m,b.col);b.say=m;b.sayT=4;
-}
-function partyInvite(id){
-  const b=BOTS.find(x=>x.id===id);if(!b||b.state==='away'||b.inParty)return;
-  if(PARTY.length>=2){toast('Your party is full (2 allies max)');return;}
-  if(chance(.85)){b.inParty=true;b.state='idle';PARTY.push(b);chat('Party','','You invited '+b.name+' ('+b.cls.n+') — they joined!');chat('Party',b.name,pick(['ready!','let\'s go!','I\'ll cover you','lead the way']),b.col);sfx('buy');}
-  else{chat('Whisper',b.name,pick(['busy right now, sorry','maybe later!','in the middle of a trade']),b.col);}
-}
-function partyDismiss(id){const i=PARTY.findIndex(b=>b.id===id);if(i<0)return;const b=PARTY.splice(i,1)[0];b.inParty=false;b.x=pl.x+40;b.y=pl.y+40;chat('Party','',b.name+' left the party.');}
 
 // ============================================================ PANELS (DOM UI)
 const panelEl=$('panel');
-const TITLES={inv:'Inventory & Equipment',tal:'Talent Shrine',idle:'Idle Forge & Training',quest:'Quest Board',market:'Market Stall',asc:'Ascension Obelisk',party:'Realm & Party',gate:'Dungeon Portal',menu:'Menu',help:'How to Play',result:'Trial Result'};
-function openPanel(n){if(G.fade)return;G.panel=n;G.confirm='';panelEl.classList.remove('hidden');mouse.l=mouse.r=false;if(n==='gate')G.gateF=Math.min(Math.max(1,G.gateF),S.p.maxFloor+1);renderPanel();sfx('click');}
+const TITLES={inv:'Inventory & Equipment',tal:'Talent Shrine',quest:'Quest Board',market:'Merchant',asc:'Ascension Obelisk',party:'Party & Realm',guild:'Guild',gate:'Dungeon Portal',menu:'Menu',help:'How to Play'};
+function openPanel(n){if(G.fade)return;tutEvt('open_'+n);G.panel=n;G.confirm='';panelEl.classList.remove('hidden');mouse.l=mouse.r=false;if(n==='gate')G.gateF=Math.min(Math.max(1,G.gateF),S.p.maxFloor+1);renderPanel();sfx('click');}
 function closePanel(){if(!G.panel)return;G.panel=null;panelEl.classList.add('hidden');G.confirm='';}
 function togglePanel(n){if(G.panel===n)closePanel();else openPanel(n);}
 function renderPanel(){
   if(!G.panel)return;
-  const n=G.panel,P=S.p,fn={inv:pInv,tal:pTal,idle:pIdle,quest:pQuest,market:pMarket,asc:pAsc,party:pParty,gate:pGate,menu:pMenu,help:pHelp,result:pResult}[n];
+  const n=G.panel,P=S.p,fn={inv:pInv,tal:pTal,guild:pGuild,quest:pQuest,market:pMarket,asc:pAsc,party:pParty,gate:pGate,menu:pMenu,help:pHelp}[n];
   const st=panelEl.scrollTop;
-  panelEl.innerHTML='<div class="ph"><h2>'+TITLES[n]+'</h2><span class="res">◈ '+fmt(P.gold)+' gold &nbsp; ✦ '+fmt(P.ess)+' essence &nbsp; ✧ '+P.ap+' AP</span><button class="x" data-a="close">✕</button></div>'+fn();
+  panelEl.innerHTML='<div class="ph"><h2>'+TITLES[n]+'</h2><span class="res">◈ '+fmt(P.gold)+' gold &nbsp; ✦ '+fmt(P.ess)+' essence &nbsp; ✧ '+P.ap+' AP</span><button class="x" data-a="close">✕</button></div>'+(NAVT.some(t=>t[0]===n)?navHtml():'')+fn();
   panelEl.scrollTop=st;
 }
 panelEl.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t)return;doAct(t.dataset);});
@@ -813,30 +817,14 @@ function pTal(){
   let h='<div class="pb"><div class="row"><div>Talent points: <b style="color:#ffd24a;font-size:16px">'+tp.free+'</b> / '+tp.total+' <span class="sm">(1 per level)</span></div><div><button class="btn red" data-a="respec">Respec ✦'+respecCost()+'</button></div></div><div style="overflow-x:auto"><div class="tree">';
   for(const b of BRANCH)h+='<div class="bl" style="left:'+(b.x+40)+'px">'+b.n+'</div>';
   const pos=id=>{const n=TAL[id];return{x:BRANCH[n.b].x+n.c*80+29,y:n.r*96+59};};
-  h+='<svg width="1000" height="430" style="position:absolute;left:0;top:0;pointer-events:none">';
+  h+='<svg width="1260" height="640" style="position:absolute;left:0;top:0;pointer-events:none">';
   for(const id in TAL){const n=TAL[id];if(!n.req)continue;for(const r of n.req){const a=pos(r),b=pos(id);h+='<line x1="'+a.x+'" y1="'+a.y+'" x2="'+b.x+'" y2="'+b.y+'" stroke="'+((P.tal[r]||0)>0?'#5affd0':'#3a3f66')+'" stroke-width="3"/>';}}
   h+='</svg>';
   for(const id in TAL){
     const n=TAL[id],rk=P.tal[id]||0,reqOk=!n.req||n.req.every(r=>(P.tal[r]||0)>0),av=reqOk&&rk<n.max&&tp.free>0;
     h+='<div class="tn'+(rk>0?' on':'')+(av?' av':'')+(!reqOk?' lock':'')+'" style="left:'+(BRANCH[n.b].x+n.c*80)+'px;top:'+(n.r*96+30)+'px" data-a="talent" data-id="'+id+'" data-tip="'+esc(n.n+' — '+n.d)+'">'+n.i+'<span class="tr">'+rk+'/'+n.max+'</span></div>';
   }
-  return h+'</div></div><div class="sm" style="margin-top:6px">Hover a node for details. Keystones unlock new abilities: Overload (ultimate on R), Double Jump (trials), Roll Master, Reactive Mastery and more.</div></div>';
-}
-function pIdle(){
-  const P=S.p,r=idleRates();
-  let h='<div class="pb"><div class="card">Gold <b>'+fmt(r.gold)+'</b>/s · Essence <b>'+r.ess.toFixed(1)+'</b>/s · XP <b>'+fmt(r.xp)+'</b>/s · Skill training <b>'+r.skill.toFixed(1)+'</b>/s'+(P.gen.forge>0?' · Forge every <b>'+r.forge.toFixed(1)+'s</b>':'')+'<div class="sm">Idle systems run while you play and while the game is closed (up to '+(8+(ST.offline||0))+'h offline).</div></div><h3>Generators</h3><div class="grid">';
-  for(const id in GENDEF){
-    const g=GENDEF[id],l=P.gen[id],c=genCost(id,l);
-    h+='<div class="card"><b>'+g.n+'</b> <span class="sm">Lv '+l+'</span><div class="sm">Now: '+(l>0?g.d(l):'—')+'</div><div class="sm">Next: '+g.d(l+1)+'</div><button class="btn gold'+(P.gold<c?' dis':'')+'" data-a="buygen" data-id="'+id+'" data-n="1">Upgrade ◈'+fmt(c)+'</button><button class="btn gold'+(P.gold<c*8?' dis':'')+'" data-a="buygen" data-id="'+id+'" data-n="10">×10</button></div>';
-  }
-  h+='</div><h3>Passive skill training <span class="sm">(one skill trains at a time — online and offline)</span></h3><div class="grid">';
-  for(const k in PASS){
-    const s=P.skills[k],p=PASS[k];
-    h+='<div class="card"><b>'+p.n+'</b> <span class="sm">Lv '+s.l+'/99</span><div class="sm">'+p.d+'</div><div class="bar"><i style="width:'+(s.l>=99?100:s.x/skNeed(s.l)*100)+'%"></i></div><button class="btn'+(P.train===k?' on':'')+'" data-a="train" data-id="'+k+'">'+(P.train===k?'Training…':'Train')+'</button></div>';
-  }
-  h+='</div><h3>Auto-forge output filter</h3><div class="sm">Items at or below this rarity are auto-sold for gold (also applies to dungeon loot).</div>';
-  [['Keep all',-1],['Sell Common',0],['Sell ≤ Magic',1],['Sell ≤ Rare',2]].forEach(a=>{h+='<button class="btn'+(S.set.autoSell===a[1]?' on':'')+'" data-a="autosell" data-v="'+a[1]+'">'+a[0]+'</button>';});
-  return h+'</div>';
+  return h+'</div></div><div class="sm" style="margin-top:6px">Hover a node for details. Four branches, 99 points at max level: you cannot take everything. Keystones: Overload (R), Executioner, Apex Predator, Fortress, Sanguine Pact, Unyielding.</div></div>';
 }
 function pQuest(){
   const P=S.p;let h='<div class="pb"><div class="sm">Procedurally generated contracts scale with your deepest floor. Completed: '+S.qDone+'</div><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">';
@@ -847,7 +835,7 @@ function pQuest(){
   return h+'</div><h3>Board</h3><button class="btn'+(P.gold<rc?' dis':'')+'" data-a="newq">Replace unfinished quests ◈'+fmt(rc)+'</button></div>';
 }
 function pMarket(){
-  const P=S.p;let h='<div class="pb"><div class="sm">Other adventurers post listings here. Stock refreshes every few minutes.'+(ev('merchant')?' <b style="color:#7dff9a">Wandering Merchant: -30%!</b>':'')+'</div><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(210px,1fr))">';
+  const P=S.p;let h='<div class="pb"><div class="sm">The merchant restocks every few minutes.'+(ev('merchant')?' <b style="color:#7dff9a">Wandering Merchant: -30%!</b>':'')+'</div><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(210px,1fr))">';
   for(const l of MARKET){
     const pr=marketPrice(l);
     if(l.it)h+='<div>'+itemCard(l.it,{act:'noop'})+'<div class="row"><span class="sm">by '+esc(l.seller)+'</span><button class="btn gold'+(P.gold<pr?' dis':'')+'" data-a="buym" data-id="'+l.id+'">Buy ◈'+fmt(pr)+'</button></div></div>';
@@ -858,51 +846,55 @@ function pMarket(){
 const perkCost=(id,r)=>Math.ceil(APERK[id].base*Math.pow(1.35,r));
 function pAsc(){
   const P=S.p,ok=canAscend();
-  let h='<div class="pb"><div class="card"><b>Ascension '+P.ascs+'</b> · World Tier '+(P.ascs+1)+' · Deepest floor this run: <b>'+P.runMax+'</b> · Level '+P.lvl+'<div class="sm">Ascend to reset your level, gear, gold, talents and idle buildings in exchange for permanent Ascension Points (AP). Enemies grow stronger each tier, but so does your reward. Requires floor 8 or level 30.</div><div style="margin-top:6px">Ascending now grants <b style="color:#c45dff">+'+apGain()+' AP</b> ';
+  let h='<div class="pb"><div class="card"><b>Ascension '+P.ascs+'</b> · World Tier '+(P.ascs+1)+' · Deepest floor this run: <b>'+P.runMax+'</b> · Level '+P.lvl+'<div class="sm">Ascend to reset your level, gear, gold, and talents in exchange for permanent Ascension Points (AP). Enemies grow stronger each tier, but so does your reward. Requires floor 8 or level 30.</div><div style="margin-top:6px">Ascending now grants <b style="color:#c45dff">+'+apGain()+' AP</b> ';
   if(!ok)h+='<span class="sm">(not yet available)</span>';
   else if(G.confirm==='asc')h+='<button class="btn red" data-a="ascend">CONFIRM ASCEND</button><button class="btn" data-a="cancel">Cancel</button>';
   else h+='<button class="btn red" data-a="confirm" data-v="asc">Ascend…</button>';
   h+='</div></div><h3>Permanent perks (✧ '+P.ap+' AP available)</h3><div class="grid">';
   for(const id in APERK){const p=APERK[id],r=P.perks[id]||0,c=perkCost(id,r);h+='<div class="card"><b>'+p.n+'</b> <span class="sm">Rank '+r+'/'+p.max+'</span><div class="sm">'+p.d+' per rank</div>'+(r<p.max?'<button class="btn gold'+(P.ap<c?' dis':'')+'" data-a="perk" data-id="'+id+'">Buy ✧'+c+'</button>':'<span class="sm">MAX</span>')+'</div>';}
-  h+='</div><h3>Artifacts <span class="sm">(won in Secret Dimension trials — permanent, survive ascension)</span></h3><div class="grid">';
-  for(const id in ARTS){const a=ARTS[id],r=P.art[id]||0;h+='<div class="card" style="opacity:'+(r?1:.45)+'"><b style="color:#ffd24a">'+a.n+'</b> <span class="sm">Rank '+r+'/10</span><div class="sm">'+a.d+' per rank</div></div>';}
   return h+'</div></div>';
 }
+const NAVT=[['inv','Gear'],['tal','Talents'],['guild','Guild'],['party','Party'],['quest','Quests',1],['market','Merchant',1],['asc','Ascend',1]];
+function navHtml(){return '<div class="nav">'+NAVT.filter(t=>!t[2]||mode==='hub').map(t=>'<button class="tab'+(G.panel===t[0]?' on':'')+'" data-a="goto" data-v="'+t[0]+'">'+t[1]+'</button>').join('')+'</div>';}
 function pParty(){
-  const P=S.p;let h='<div class="pb"><div class="card">Realm <b>Ascendia-1</b> · Population <b>'+(BOTS.length+1+peerList().length)+'/'+(BOTS.length+8+peerList().length)+'</b> · In dungeons <b>'+G.away+'</b> · Ping <b>'+(18+Math.floor(G.t%7))+'ms</b>'+(G.evt?' · Event: <b style="color:'+G.evt.c+'">'+G.evt.n+'</b> ('+Math.ceil(G.evt.left)+'s)':'')+'</div>';
-  h+=netPanelHtml();h+='<div class="cols2"><div><h3>Simulated players in town <span class="sm">(party: '+PARTY.length+'/2 — allies fight beside you and boost XP)</span></h3>';
-  for(const b of BOTS){
-    h+='<div class="card row" style="margin-bottom:4px"><span><b style="color:'+b.col+'">'+esc(b.name)+'</b> <span class="sm">Lv '+b.lvl+' '+b.cls.n+' · floor '+b.floor+' · '+(b.inParty?'in your party':b.state==='away'?'in dungeon':b.state==='gather'?'heading to portal':'in town')+'</span></span>'+(b.inParty?'<button class="btn red" data-a="dismiss" data-id="'+b.id+'">Dismiss</button>':'<button class="btn'+(b.state==='away'?' dis':'')+'" data-a="invite" data-id="'+b.id+'">Invite</button>')+'</div>';
-  }
-  const lb=BOTS.map(b=>({n:b.name,l:b.lvl,f:b.floor,me:false})).concat(peerList().map(p=>({n:p.name,l:p.lvl,f:p.fl||0,me:false}))).concat([{n:P.name,l:P.lvl,f:P.bestEver,me:true}]).sort((a,b)=>b.f*100+b.l-(a.f*100+a.l)).slice(0,10);
-  h+='</div><div><h3>Realm leaderboard</h3>';
-  lb.forEach((e,i)=>{h+='<div class="stat" style="'+(e.me?'color:#5affd0;font-weight:700':'')+'"><span>#'+(i+1)+' '+esc(e.n)+'</span><b>Lv '+e.l+' · floor '+e.f+'</b></div>';});
-  return h+'<div class="sm" style="margin-top:8px">Tip: type in chat (Enter) — other players may answer. Commands: /name /color /who /save</div></div></div></div>';
+  const P=S.p,lead=!PARTYL;let h='<div class="pb">'+netPanelHtml();
+  h+='<div class="cols2"><div><h3>Your party'+(PARTYR.length?' <span class="sm">('+(PARTYR.length+1)+'/4 · '+(lead?'you lead':'following the leader')+')</span>':'')+'</h3>';
+  if(!PARTYR.length)h+='<div class="sm">You are not in a party. Invite a player above. When the leader enters a dungeon, every member is pulled into the same run.</div>';
+  else{
+    for(const id of PARTYR){const p=NET.peers[id];h+='<div class="card row" style="margin-bottom:4px"><span><b style="color:'+(p?p.color:'#fff')+'">'+(id===PARTYL?'♛ ':'')+esc(p?p.name:'(offline)')+'</b> <span class="sm">'+(p?'Lv '+p.lvl+' · '+(p.mode==='dun'?'floor '+p.f:'town'):'')+'</span></span><span>'+(lead?'<button class="btn" data-a="plead" data-id="'+id+'">Make leader</button><button class="btn red" data-a="pleave" data-id="'+id+'">Kick</button>':'')+'</span></div>';}
+    h+='<button class="btn red" data-a="pdisband">'+(lead?'Disband party':'Leave party')+'</button>';}
+  h+='<div class="sm" style="margin-top:8px">Commands: /party invite|kick|promote|leave|disband|list · /pc message</div></div><div><h3>Realm leaderboard</h3>';
+  const lb=peerList().map(p=>({n:p.name,l:p.lvl,f:p.fl||0,me:false})).concat([{n:P.name,l:P.lvl,f:P.bestEver,me:true}]).sort((a,b)=>b.f*100+b.l-(a.f*100+a.l)).slice(0,10);
+  lb.forEach((e,i)=>{h+='<div class="stat" style="'+(e.me?'color:var(--echo);font-weight:700':'')+'"><span>#'+(i+1)+' '+esc(e.n)+'</span><b>Lv '+e.l+' · floor '+e.f+'</b></div>';});
+  return h+'</div></div></div>';
+}
+function pGuild(){
+  let h='<div class="pb">';
+  if(NET.mode!=='server'||ACC.guest)return h+'<div class="card">Guilds live on the realm server. Log in with an account on a realm server (node server.js) to found or join one.</div></div>';
+  if(!GUILD)return h+'<div class="card"><b>You are not in a guild.</b><div class="sm">Found one, or ask an officer to invite you. Members share a bonus to XP and gold find that grows with guild size, up to +10%.</div><button class="btn gold" data-a="gcreate">Found a guild</button><button class="btn" data-a="gaccept">Accept invite</button></div></div>';
+  const me=GUILD.me,mod=me==='leader'||me==='officer';
+  h+='<div class="card"><div class="row"><b style="font:600 18px var(--ser)">'+esc(GUILD.name)+'</b><span class="sm">'+GUILD.members.length+' members · your rank: '+me+'</span></div>'+(GUILD.motd?'<div class="sm">“'+esc(GUILD.motd)+'”</div>':'')+'<div class="sm">Guild bonus: +'+Math.min(10,GUILD.members.length)+'% XP and gold find</div></div><h3>Roster</h3>';
+  for(const m of GUILD.members)h+='<div class="card row" style="margin-bottom:4px"><span><b'+(m.online?'':' style="opacity:.55"')+'>'+esc(m.name)+'</b> <span class="sm">'+m.role+(m.online?' · online':'')+'</span></span><span>'+(mod&&m.role==='member'?'<button class="btn red" data-a="gkick" data-n="'+esc(m.name)+'">Kick</button>':'')+(me==='leader'&&m.role!=='leader'?'<button class="btn" data-a="gpromote" data-n="'+esc(m.name)+'">Promote</button>':'')+'</span></div>';
+  return h+'<h3>Actions</h3>'+(mod?'<button class="btn" data-a="ginvite">Invite player</button><button class="btn" data-a="gmotd">Set message</button>':'')+'<button class="btn red" data-a="gleave">Leave guild</button>'+(me==='leader'?'<button class="btn red" data-a="gdisband">Disband</button>':'')+'<div class="sm" style="margin-top:6px">Guild chat: /g message</div></div>';
 }
 function pGate(){
   const P=S.p,maxF=P.maxFloor+1,f=G.gateF,bio=BIOMES[Math.floor((f-1)/5)%BIOMES.length];
-  let h='<div class="pb"><div class="card" style="text-align:center"><div class="sm">Start floor</div><div style="font-size:44px;font-weight:800;color:#5affd0">'+f+'</div><div>'+bio.n+(f%5===0?' · <b style="color:#ff5a7a">BOSS FLOOR</b>':'')+'</div><div class="sm">Deepest unlocked: '+maxF+' · World Tier '+(P.ascs+1)+' · Party allies: '+PARTY.length+'</div></div><div style="text-align:center;margin:8px 0">';
+  let h='<div class="pb"><div class="card" style="text-align:center"><div class="sm">Start floor</div><div style="font-size:44px;font-weight:800;color:#5affd0">'+f+'</div><div>'+bio.n+(f%5===0?' · <b style="color:#ff5a7a">BOSS FLOOR</b>':'')+'</div><div class="sm">Deepest unlocked: '+maxF+' · World Tier '+(P.ascs+1)+' · Party size: '+(PARTYR.length+1)+'</div></div><div style="text-align:center;margin:8px 0">';
   [['-5',-5],['-1',-1],['+1',1],['+5',5],['Max',999]].forEach(a=>{h+='<button class="btn" data-a="gatef" data-v="'+a[1]+'">'+a[0]+'</button>';});
-  h+='</div><div style="text-align:center"><button class="btn gold" style="font-size:16px;padding:9px 26px" data-a="descend">⚔ DESCEND</button></div><div class="sm" style="margin-top:10px">Every 5th floor is a bullet-hell boss arena with a procedurally composed pattern set. Dungeon floors may hide a Void Rift — a secret platforming dimension holding permanent artifacts. If you fall, you lose 10% of your gold and return to town.</div></div>';
+  h+='</div><div style="text-align:center"><button class="btn gold" style="font-size:16px;padding:9px 26px" data-a="descend">⚔ DESCEND</button></div><div class="sm" style="margin-top:10px">Every 5th floor is a bullet-hell boss arena with a procedurally composed pattern set. When the party leader descends, the whole party is pulled into the same dungeon. Legendary gear only starts dropping around floor 20, and every 5th-floor boss drops better loot. If you fall, you lose 10% of your gold and return to town.</div></div>';
   return h;
 }
 function pMenu(){
   let h='<div class="pb" style="display:flex;flex-direction:column;align-items:flex-start"><button class="btn" data-a="close">▶ Resume</button><button class="btn" data-a="savenow">💾 Save now (also autosaves)</button><button class="btn" data-a="mute">'+(S.set.mute?'🔇 Sound: OFF':'🔊 Sound: ON')+'</button><button class="btn" data-a="help">❔ How to play</button><button class="btn" data-a="export">⇪ Export save</button><button class="btn" data-a="import">⇩ Import save</button>';h+='<button class="btn" data-a="netset">🌐 Multiplayer server…</button><button class="btn" data-a="logout">⏏ Save &amp; log out ('+esc(ACC.name)+')</button>';
   if(mode==='dun')h+='<button class="btn gold" data-a="retreat">⟲ Retreat to hub (keep loot)</button>';
-  if(mode==='plat')h+='<button class="btn gold" data-a="retreat">⟲ Abandon trial</button>';
   h+=G.confirm==='reset'?'<button class="btn red" data-a="reset">CONFIRM — erase everything</button>':'<button class="btn red" data-a="confirm" data-v="reset">Hard reset…</button>';
   return h+'<div class="sm" style="margin-top:10px">Play time '+Math.round(S.p.play/60)+' min · Kills '+fmt(S.p.kills)+' · Bosses '+S.p.bosses+' · Trials '+S.p.trials+' · Deaths '+S.p.deaths+' · Items found '+S.p.items+' · Legendaries '+S.p.legs+'</div></div>';
 }
 function pHelp(){
   return '<div class="pb"><div class="cols2"><div><h3>Controls</h3>'+
-  stl('Move','WASD / Arrow keys')+stl('Aim & shoot','Mouse / Left click (hold)')+stl('Nova skill','Right click')+stl('Ward Pulse (clears bullets)','Q')+stl('Ultimate (needs Overload talent)','R')+stl('Dodge roll / Jump','Space')+stl('Potion','F')+stl('Interact / enter','E')+stl('Trials: dash','Shift')+stl('Inventory · Talents','I · T')+stl('Idle · Quests · Market','U · J · M (hub)')+stl('Ascension · Party','K · P (hub)')+stl('Accept party invite / join run','Y')+stl('Chat · whisper','Enter · /w name msg')+stl('Menu / close','Esc')+stl('Mute','N')+
-  '</div><div><h3>The loop</h3><div class="sm" style="font-size:12.5px;line-height:1.5">• <b>Hub (idle + MMO):</b> a living town of other adventurers who chat, trade, form parties and raid dungeons. Your gold mine, essence well, auto-forge and skill training keep working even while you are away.<br>• <b>Dungeon (RPG + bullet hell):</b> procedural floors with RNG loot — affixes, elemental weapons, rune sockets and legendary effects. Every 5th floor is a boss with a unique pattern set. Dodge-roll has invincibility frames.<br>• <b>Elemental reactions:</b> Fire on Chilled = Steam burst · Frost on Burning = Shatter · Volt on Venom = Toxic Surge · Fire on Venom = Blight Blaze.<br>• <b>Trials (platformer):</b> Void Rifts and the Trial Gate send you to precision-platforming gauntlets — win permanent Artifacts.<br>• <b>Progression:</b> level → talent tree · idle skills · ascension prestige with permanent perks · artifacts · world tiers.<br>• <b>Multiplayer:</b> real players show up in the hub with gold names. Open a second tab, or connect to a realm server (run server.js), to play with others. Invite them to a party in the Guild Hall (P), press <b>Y</b> to accept invites and to join a party member when they descend: you then share the same dungeon layout and enemy health. Chat with Enter, whisper with /w name message.<br>• <b>Accounts:</b> your progress saves under your account, and to the realm server too if connected, so you can log in from any device. Menu → Save and log out.</div></div></div></div>';
+  stl('Move','WASD / Arrow keys')+stl('Aim & shoot','Mouse / Left click (hold)')+stl('Nova (long cooldown)','Right click')+stl('Ward Pulse (clears bullets)','Q')+stl('Ultimate (needs Overload talent)','R')+stl('Dodge roll','Space')+stl('Potion','F')+stl('Interact / enter','E')+stl('Inventory · Talents','I · T')+stl('Party · Guild','P · G')+stl('Quests · Merchant · Ascension (town)','J · M · K')+stl('Accept party invite','Y')+stl('Chat / commands','Enter, then /help')+stl('Menu / close','Esc')+
+  '</div><div><h3>How it works</h3><div class="sm" style="font-size:12.5px;line-height:1.55">• <b>Dungeon:</b> procedural floors with rare loot, rune sockets and elemental reactions. Every 5th floor is a boss with better drops. Legendary gear only starts dropping around floor 20.<br>• <b>Party:</b> invite real players from the Party tab (or /party invite). When the leader enters a dungeon, the whole party is pulled in and follows through each floor.<br>• <b>Guilds:</b> found one on a realm server for shared bonuses and guild chat (/g).<br>• <b>Progression:</b> level up for talent points across four branches, then ascend for permanent perks and harder world tiers.<br>• <b>Commands:</b> /leave exits a dungeon, /stuck, /pot, /floor, /dungeon n, /stats, /sell, /sort, /top, /tutorial. Type /help in chat.</div></div></div></div>';
 }
-function pResult(){
-  const R=G.result||{};
-  return '<div class="pb" style="text-align:center"><div style="font-size:26px;font-weight:800;color:#ffd24a">'+(R.stars||0)+' / 3 ★</div><div>Time '+(R.time||0).toFixed(1)+'s · Deaths '+(R.deaths||0)+' · Shards '+(R.coins||0)+'/'+(R.total||0)+'</div><div class="card" style="margin:12px auto;max-width:420px"><div style="color:#ffd24a;font-size:18px"><b>'+esc(R.art||'')+'</b></div><div class="sm">'+esc(R.artD||'')+'</div><div>Artifact rank <b>'+(R.rank||1)+'</b></div></div><div class="sm">Bonus: ✦'+(R.ess||0)+' essence'+(R.rune?' · 1 rune':'')+'</div><button class="btn gold" data-a="contresult" style="margin-top:10px;padding:8px 24px">Continue</button></div>';
-}
-
 function doAct(d){
   const P=S.p,a=d.a;
   switch(a){
@@ -911,7 +903,7 @@ function doAct(d){
     case'cancel':G.confirm='';break;
     case'confirm':G.confirm=d.v;break;
     case'sel':G.selId=d.id;sfx('click');break;
-    case'equip':{const f=findItem(d.id);if(!f||f.eq)return;const old=P.eq[f.it.slot];P.inv.splice(P.inv.indexOf(f.it),1);if(old)P.inv.push(old);P.eq[f.it.slot]=f.it;recalc();sfx('click');break;}
+    case'equip':{const f=findItem(d.id);if(!f||f.eq)return;const old=P.eq[f.it.slot];P.inv.splice(P.inv.indexOf(f.it),1);if(old)P.inv.push(old);P.eq[f.it.slot]=f.it;recalc();tutEvt('equip');sfx('click');break;}
     case'unequip':{const f=findItem(d.id);if(!f||!f.eq)return;if(P.inv.length>=INV_MAX){toast('Backpack full');return;}P.inv.push(f.it);delete P.eq[f.it.slot];recalc();break;}
     case'sell':{const f=findItem(d.id);if(!f||f.eq)return;P.gold+=sellVal(f.it);P.inv.splice(P.inv.indexOf(f.it),1);G.selId=null;sfx('buy');break;}
     case'salvage':{const f=findItem(d.id);if(!f||f.eq)return;P.ess+=salvVal(f.it);P.inv.splice(P.inv.indexOf(f.it),1);G.selId=null;sfx('buy');break;}
@@ -924,7 +916,6 @@ function doAct(d){
     case'attune':{const f=findItem(d.id);if(!f||mode!=='hub')return;const it=f.it,c=80+it.ilvl*5;if(P.ess<c)return;P.ess-=c;it.el=d.el;recalc();sfx('loot');break;}
     case'talent':{const n=TAL[d.id],rk=P.tal[d.id]||0,tp=talPoints();if(!n||rk>=n.max||tp.free<=0)return;if(n.req&&!n.req.every(r=>(P.tal[r]||0)>0))return;P.tal[d.id]=rk+1;recalc();sfx('click');break;}
     case'respec':{const c=respecCost();if(P.ess<c){toast('Not enough essence');return;}P.ess-=c;P.tal={};recalc();sfx('buy');break;}
-    case'buygen':{const n=+d.n;let bought=0;for(let i=0;i<n;i++){const c=genCost(d.id,P.gen[d.id]);if(P.gold<c)break;P.gold-=c;P.gen[d.id]++;bought++;}if(bought)sfx('buy');break;}
     case'train':P.train=d.id;sfx('click');break;
     case'autosell':S.set.autoSell=+d.v;break;
     case'claimq':claimQuest(d.id);break;
@@ -935,15 +926,26 @@ function doAct(d){
     case'invite':partyInvite(d.id);break;
     case'dismiss':partyDismiss(d.id);break;
     case'gatef':G.gateF=clamp(G.gateF+(+d.v>900?999:+d.v),1,P.maxFloor+1);break;
-    case'descend':{const f=G.gateF;closePanel();startDungeon(f);return;}
+    case'descend':{if(PARTYL){toast('Only the party leader can start a run');return;}const f=G.gateF;closePanel();startDungeon(f);return;}
     case'savenow':save();toast('Game saved');break;
     case'mute':S.set.mute=!S.set.mute;break;
     case'help':G.panel='help';break;
-    case'retreat':closePanel();if(mode==='dun')exitDungeon(false);else if(mode==='plat')abandonTrial();return;
+    case'retreat':closePanel();if(mode==='dun')exitDungeon(false);return;
     case'reset':try{localStorage.removeItem(SAVEKEY);}catch(e){}S=defaults();try{location.reload();}catch(e){}return;
     case'export':try{prompt('Copy your save string:',btoa(unescape(encodeURIComponent(JSON.stringify(S)))));}catch(e){}return;
     case'import':{try{const v=prompt('Paste a save string:');if(v){S=merge(defaults(),JSON.parse(decodeURIComponent(escape(atob(v.trim())))));recalc();save();toast('Save imported');}}catch(e){toast('Invalid save string');}break;}
     case'pinvite':netInvite(d.id);break;
+    case'goto':G.panel=d.v;tutEvt('open_'+d.v);break;
+    case'plead':{const p=NET.peers[d.id];if(p)partyPromote(p.name);break;}
+    case'pdisband':partyLeaveAll();break;
+    case'gcreate':{const n=prompt('Guild name (3-20 letters, numbers, spaces):');if(n)guildOp({op:'create',name:n});return;}
+    case'gaccept':guildOp({op:'accept'});return;
+    case'ginvite':{const n=prompt('Invite which online player?');if(n)guildOp({op:'invite',name:n});return;}
+    case'gmotd':{const n=prompt('Guild message of the day:');if(n!==null)guildOp({op:'motd',text:n});return;}
+    case'gkick':guildOp({op:'kick',name:d.n});return;
+    case'gpromote':guildOp({op:'promote',name:d.n});return;
+    case'gleave':guildOp({op:'leave'});return;
+    case'gdisband':if(confirm('Disband the guild for everyone?'))guildOp({op:'disband'});return;
     case'pleave':partyDrop(d.id);break;
     case'pwhisper':{const p=NET.peers[d.id];closePanel();openChat();if(p)chatIn.value='/w '+p.name+' ';return;}
     case'netset':{let v=null;try{v=prompt('Realm server URL (e.g. ws://myhost:8080 or wss://example.com). Leave empty for local mode:',lsGet(NETK)||'');}catch(e){}if(v!==null){lsSet(NETK,v.trim());toast('Saved — reload the page to apply.');}break;}
@@ -963,14 +965,13 @@ function snapCam(){
 // ============================================================ HUB
 const HW=2200,HH=1400,PLAZA={x:1100,y:720,r:210};
 const STN=[
-  {id:'forge',n:'Idle Forge',x:300,y:240,w:240,h:150,c:'#c4763a',act:'idle'},
-  {id:'hall',n:'Guild Hall',x:1500,y:230,w:230,h:150,c:'#4a78c4',act:'party'},
+  {id:'forge',n:'Forge',x:300,y:240,w:240,h:150,c:'#c4763a',act:'inv'},
+  {id:'hall',n:'Guild Hall',x:1500,y:230,w:230,h:150,c:'#4a78c4',act:'guild'},
   {id:'shrine',n:'Talent Shrine',x:520,y:900,w:190,h:140,c:'#7d6aff',act:'tal'},
   {id:'quest',n:'Quest Board',x:1260,y:900,w:190,h:120,c:'#4aa86a',act:'quest'},
   {id:'market',n:'Market Stall',x:1620,y:850,w:240,h:140,c:'#d6a43a',act:'market'},
   {id:'obelisk',n:'Ascension Obelisk',x:180,y:860,w:140,h:180,c:'#c45dff',act:'asc'},
-  {id:'gate',n:'Dungeon Portal',gate:1,x:1100,y:210,r:80,act:'gate',ix:1100,iy:290},
-  {id:'trial',n:'Trial Gate',gate:2,x:1950,y:520,r:60,act:'trial',ix:1890,iy:530}
+  {id:'gate',n:'Dungeon Portal',gate:1,x:1100,y:210,r:80,act:'gate',ix:1100,iy:290}
 ];
 for(const s of STN){if(!s.gate){s.ix=s.x+s.w/2;s.iy=s.y+s.h+30;}}
 const LAMPS=[[1000,540],[1200,540],[820,720],[1380,720],[1000,930],[1200,950],[700,470],[1500,470],[600,800],[1560,800],[420,520],[1100,420]];
@@ -1021,7 +1022,7 @@ function updHub(dt){
   G.near=near;
   if(near&&pressed.e&&!G.panel&&!typing){
     sfx('click');
-    if(near.act==='trial')startTrial('hub');else openPanel(near.act);
+    openPanel(near.act);
   }
   if(chance(dt*3)){PT.push({x:1100+rnd(-30,30),y:PLAZA.y+rnd(-30,30),vx:rnd(-10,10),vy:rnd(-90,-50),l:1,m:1,c:'#8fdcff',s:2.2,g:80});}
 }
@@ -1144,7 +1145,7 @@ function blockedD(x,y,r){return solidD(x-r,y-r)||solidD(x+r,y-r)||solidD(x-r,y+r
 function moveD(o,dx,dy,r){if(!blockedD(o.x+dx,o.y,r))o.x+=dx;if(!blockedD(o.x,o.y+dy,r))o.y+=dy;}
 function losD(x1,y1,x2,y2){const d=Math.hypot(x2-x1,y2-y1),n=Math.ceil(d/20);for(let i=1;i<n;i++){const t=i/n;if(solidD(x1+(x2-x1)*t,y1+(y2-y1)*t))return false;}return true;}
 function floorSeed(rs,f){let h=((rs>>>0)^Math.imul(f,2654435761))>>>0;h=Math.imul(h^(h>>>15),2246822507)>>>0;return(h^(h>>>13))>>>0;}
-function genDungeon(f,rs){
+function genDungeon(f,rs){if(f===0)return genTutorialFloor();
   const orig=Math.random;Math.random=mulberry(floorSeed(rs,f)^0x5bd1e995);
   try{return genDungeonInner(f,rs);}finally{Math.random=orig;}
 }
@@ -1188,7 +1189,7 @@ function genDungeonInner(f,rs){
     if(chance(.38)){const p=rp(rooms[i]);nd.chests.push({x:p.x,y:p.y,open:false});}
     if(chance(.2)){const p=rp(rooms[i]);nd.shrines.push({x:p.x,y:p.y,used:false,k:r(0,4)});}
   }
-  if(!isBoss&&chance(.3+(ev('rift')?.5:0)&&rooms.length>2?(.3+(ev('rift')?.5:0)):0)){
+  if(false&&chance(.3+(ev('rift')?.5:0)&&rooms.length>2?(.3+(ev('rift')?.5:0)):0)){
     let pi=r(1,rooms.length-1);if(pi===ei)pi=(pi%(rooms.length-1))+1;
     const p=rp(rooms[pi]);nd.portal={x:p.x,y:p.y,used:false};
   }
@@ -1212,8 +1213,8 @@ function pickArch(f){
 }
 function spawnEnemy(f,x,y,type,o){
   o=o||{};const A=ARCH[type],asc=S.p.ascs;
-  const hpM=(1+.32*(f-1))*(1+.75*asc)*(o.mini?.35:1);
-  const e={id:uid(),sid:o.mini?-1:D.sidn++,type:type,x:x,y:y,kx:0,ky:0,r:A.r*(o.mini?.75:1),hp:0,max:0,dmg:A.dmg*(1+.13*(f-1))*(1+.35*asc)*(ev('blood')?1.35:1),spd:A.spd,el:pick(D.biome.el),st:{},t:Math.random()*6,cd:rnd(.6,2),aff:null,dead:false,aware:!!o.aware,flash:0,state:0,stt:rnd(1,3),xp:A.xp*(1+.18*(f-1)),shield:0,elite:false,face:0,ang:0,cx:x,cy:y};
+  const hpM=(1+.4*(f-1))*Math.pow(1.045,f-1)*(1+.9*asc)*(o.mini?.35:1);
+  const e={id:uid(),sid:o.mini?-1:D.sidn++,type:type,x:x,y:y,kx:0,ky:0,r:A.r*(o.mini?.75:1),hp:0,max:0,dmg:A.dmg*(1+.16*(f-1))*(1+.45*asc)*(ev('blood')?1.35:1),spd:A.spd,el:pick(D.biome.el),st:{},t:Math.random()*6,cd:rnd(.6,2),aff:null,dead:false,aware:!!o.aware,flash:0,state:0,stt:rnd(1,3),xp:A.xp*(1+.18*(f-1)),shield:0,elite:false,face:0,ang:0,cx:x,cy:y};
   e.max=e.hp=A.hp*hpM;
   if(!o.mini&&chance(.12+f*.008+(ev('blood')?.12:0))){
     e.elite=true;e.aff=pick(AFFIX);e.max=e.hp=e.hp*2.4;e.r*=1.2;e.dmg*=1.15;e.xp*=3;
@@ -1225,9 +1226,9 @@ function makeBoss(f){
   const bio=D.biome,asc=S.p.ascs,col=hsl2hex((bio.h+ri(-25,25)+360)%360,80,62);
   const bag=['ring','spiral','fan','wave','cross','homing','rain','zone'].sort(()=>Math.random()-.5);
   const k=bag;
-  const e={id:uid(),sid:D.sidn++,type:'boss',boss:true,name:pick(BN1)+pick(BN2)+' '+pick(BT),x:D.w/2*TS,y:9*TS,kx:0,ky:0,r:34,max:0,hp:0,dmg:11*(1+.13*(f-1))*(1+.35*asc),spd:150,el:pick(bio.el),st:{},t:0,cd:0,aff:null,dead:false,aware:false,flash:0,state:0,stt:0,xp:80*(1+.25*f),shield:0,elite:true,face:0,ang:0,
+  const e={id:uid(),sid:D.sidn++,type:'boss',boss:true,name:pick(BN1)+pick(BN2)+' '+pick(BT),x:D.w/2*TS,y:9*TS,kx:0,ky:0,r:34,max:0,hp:0,dmg:14*(1+.16*(f-1))*(1+.45*asc),spd:150,el:pick(bio.el),st:{},t:0,cd:0,aff:null,dead:false,aware:false,flash:0,state:0,stt:0,xp:80*(1+.25*f),shield:0,elite:true,face:0,ang:0,
     bcol:col,ph:0,phases:[[k[0],k[1]],[k[0],k[2],k[3]],[k[1],k[2],k[3],k[4]]],atk:[],inv:0,ma:0,cx:D.w/2*TS,cy:D.h/2*TS};
-  e.max=e.hp=(2000+f*450)*(1+.75*asc);
+  e.max=e.hp=(3200+f*700)*(1+.9*asc)*Math.pow(1.03,f);
   e.atk=e.phases[0].map(n=>mkAtk(n,0,f));
   return e;
 }
@@ -1294,7 +1295,7 @@ function eMelee(e,d){
     if(e.aff==='Vampiric')e.hp=Math.min(e.max,e.hp+e.max*.1);
   }
 }
-function updEnemy(e,dt){
+function updEnemy(e,dt){if(e.tdummy){e.t+=dt;e.flash=Math.max(0,e.flash-dt);return;}
   e.t+=dt;e.flash=Math.max(0,e.flash-dt);const st=e.st;
   if(st.burn){st.burn.t-=dt;hurtEnemy(e,st.burn.dps*dt,'fire',{dot:1});if(st.burn.t<=0)delete st.burn;}
   if(e.dead)return;
@@ -1344,6 +1345,7 @@ function updEnemy(e,dt){
 function hurtEnemy(e,dmg,el,o){
   if(e.dead||dmg<=0)return 0;
   if(e.inv>0)return 0;
+  if(ST.flags.execute&&e.hp<e.max*.25)dmg*=1.4;
   if(el&&el!=='phys'&&el===e.el)dmg*=.6;
   if(e.shield>0){const a=Math.min(e.shield,dmg);e.shield-=a;dmg-=a;if(e.shield<=0)burst(e.x,e.y,'#8ad0ff',12,150,.4,3);}
   e.hp-=dmg;if(e.sid>=0)netDmg(e,dmg);
@@ -1407,32 +1409,32 @@ function drop(x,y,type,v,item){D.pickups.push({x:x,y:y,type:type,v:v,item:item,v
 function dropLoot(e){
   const f=D.f,P=S.p,lootM=(1+ST.ldrop/100)*(ev('blood')?1.5:1),gM=(1+ST.gf/100)*(ev('golden')?2:1)*(pl.buff.greed>0?2:1);
   const ng=ri(1,3)+(e.elite?3:0)+(e.boss?20:0);
-  for(let i=0;i<ng;i++)drop(e.x,e.y,'gold',Math.max(1,Math.round(rnd(2,6)*(1+f*.45)*gM*(e.boss?3:1))),null);
+  for(let i=0;i<ng;i++)drop(e.x,e.y,'gold',Math.max(1,Math.round(rnd(1,4)*(1+f*.35)*gM*(e.boss?3:1))),null);
   const il=f+Math.floor(P.lvl/4)+ri(0,2)+P.ascs*2;
   if(e.boss){
-    const n=3+(chance(.5)?1:0);
-    for(let i=0;i<n;i++){const rar=Math.max(2,rollRar(1.2+ST.ldrop/100));drop(e.x,e.y,'item',0,genItem(il+2,i===0&&chance(.25)?4:rar));}
+    const n=2+(chance(.4)?1:0);
+    for(let i=0;i<n;i++){const rar=Math.max(2,rollRar(.8+ST.ldrop/100));drop(e.x,e.y,'item',0,genItem(il+3,i===0?(chance(.12)?4:3):rar));}
     for(let i=0;i<2;i++)drop(e.x,e.y,'rune',0,{t:pick(RUNEKEYS),tier:Math.min(5,1+Math.floor(f/7)+(chance(.3)?1:0))});
-  }else if(chance(.065*lootM*(e.elite?5:1))){
-    drop(e.x,e.y,'item',0,genItem(il,e.elite?Math.max(1,rollRar(.9+ST.ldrop/100)):null));
+  }else if(chance(.028*lootM*(e.elite?4:1))){
+    drop(e.x,e.y,'item',0,genItem(il,e.elite?Math.max(1,rollRar(.5+ST.ldrop/100)):null));
   }
   if(chance(.1+(e.elite?.5:0)))drop(e.x,e.y,'ess',Math.max(1,Math.round(ri(1,3)*(1+f*.2))),null);
-  if(chance(.03*(1+ST.rune/100)*(ev('runes')?3:1)*(e.elite?3:1)))drop(e.x,e.y,'rune',0,{t:pick(RUNEKEYS),tier:Math.min(5,1+Math.floor(f/7)+(chance(.15)?1:0))});
+  if(chance(.015*(1+ST.rune/100)*(ev('runes')?3:1)*(e.elite?3:1)))drop(e.x,e.y,'rune',0,{t:pick(RUNEKEYS),tier:Math.min(5,1+Math.floor(f/7)+(chance(.15)?1:0))});
   if(chance(.06))drop(e.x,e.y,'hp',Math.round(ST.maxhp*.15),null);
 }
 function heal(n){pl.hp=Math.min(ST.maxhp,pl.hp+n);floatText(pl.x,pl.y-30,'+'+Math.round(n),'#7dff9a',15);burst(pl.x,pl.y,'#7dff9a',8,100,.5,2.5);}
 function hurtPlayer(dmg){
-  dmg*=1-ST.dr/100;pl.hp-=dmg;pl.inv=.55;pl.hitT=.2;G.shake=Math.max(G.shake,9);G.flash=.25;
+  dmg*=1-Math.min(80,ST.dr+(ST.flags.fortress&&pl.hp>ST.maxhp*.5?10:0))/100;pl.hp-=dmg;pl.inv=.55;pl.hitT=.2;G.shake=Math.max(G.shake,9);G.flash=.25;
   floatText(pl.x,pl.y-26,'-'+Math.round(dmg),'#ff5a7a',16);burst(pl.x,pl.y,'#ff5a7a',10,160,.4,3);sfx('hurt');
   if(pl.hp<=0)playerDie();
 }
-function playerDie(){
+function playerDie(){if(D&&D.f===0){pl.hp=ST.maxhp;pl.inv=2;toast("Eira: Try again. Training can't hurt you.");return;}if(ST.flags.unyield&&pl.unyield){pl.unyield=false;pl.hp=ST.maxhp*.25;pl.inv=1.8;showBanner('Unyielding','You refuse to fall','#ff9a3a',2000);return;}
   if(ST.flags.phoenix&&pl.phoenix){pl.phoenix=false;pl.hp=ST.maxhp*.5;pl.inv=2.2;D.eb.length=0;ringFx(pl.x,pl.y,300,'#ff7a2e',.7);showBanner('Phoenix Heart','You rise again','#ff7a2e',2200);sfx('legend');return;}
   pl.hp=0;G.dead=2.6;S.p.deaths++;sfx('die');mouse.l=false;burst(pl.x,pl.y,S.p.color,50,300,.9,3.5);
 }
 function playerShoot(){
   const w=ST.weapon,wb=w?w.wb:{rate:4,spd:540,pat:'single'},el=w&&w.el?w.el:null;
-  const base=ST.dmg*(1+ST.dmgP/100)*(el?1+ST[el]/100:1)*(pl.ult>0?1.5:1)*(pl.buff.fury>0?1.3:1);
+  const base=ST.dmg*(1+ST.dmgP/100)*(el?1+ST[el]/100:1)*(pl.ult>0?1.25:1)*(pl.buff.fury>0?1.3:1)*(ST.flags.apex&&pl.hp>=ST.maxhp?1.25:1)*(ST.flags.lastStand&&pl.hp<ST.maxhp*.35?1.35:1);
   const ang=pl.aim,pat=wb.pat;
   const extra=(ST.flags.twin?1:0)+(Math.random()*100<ST.multi?1:0);
   const c=(pat==='spread'?3:1)+extra,col=ECOL[el||'phys'];
@@ -1445,15 +1447,15 @@ function playerShoot(){
 }
 const cdOf=b=>b*(1-Math.min(.75,(ST.cdr+(ev('surge')?30:0))/100));
 function castNova(){
-  pl.cd.nova=cdOf(5);const el=ST.weapon&&ST.weapon.el?ST.weapon.el:'phys',n=ST.flags.novaM?24:16;
-  const base=ST.dmg*(1+ST.dmgP/100)*(el!=='phys'?1+ST[el]/100:1)*(ST.flags.novaM?2.4:1.8);
-  for(let i=0;i<n;i++){const a=i/n*TAU;D.pb.push({x:pl.x,y:pl.y,vx:Math.cos(a)*430,vy:Math.sin(a)*430,r:6,dmg:base,el:el,life:.75,pierce:3,bounce:0,crit:ST.crit/100,critD:ST.critD/100,hit:[],own:'p',col:ECOL[el],aoe:0,nova:1});}
+  tutEvt('nova');pl.cd.nova=cdOf(14);const el=ST.weapon&&ST.weapon.el?ST.weapon.el:'phys',n=ST.flags.novaM?18:12;
+  const base=ST.dmg*(1+ST.dmgP/100)*(el!=='phys'?1+ST[el]/100:1)*(ST.flags.novaM?1.5:1.0);
+  for(let i=0;i<n;i++){const a=i/n*TAU;D.pb.push({x:pl.x,y:pl.y,vx:Math.cos(a)*430,vy:Math.sin(a)*430,r:6,dmg:base,el:el,life:.7,pierce:1,bounce:0,crit:ST.crit/100,critD:ST.critD/100,hit:[],own:'p',col:ECOL[el],aoe:0,nova:1});}
   ringFx(pl.x,pl.y,130,ECOL[el],.4);sfx('nova');G.shake=Math.max(G.shake,4);
 }
 function castWard(){
-  pl.cd.ward=cdOf(12);pl.inv=Math.max(pl.inv,.5);let n=0;
+  tutEvt('ward');pl.cd.ward=cdOf(20);pl.inv=Math.max(pl.inv,.5);let n=0;
   for(let i=D.eb.length-1;i>=0;i--){const b=D.eb[i];if(Math.hypot(b.x-pl.x,b.y-pl.y)<190){burst(b.x,b.y,b.col,2,50,.3,2);D.eb.splice(i,1);n++;}}
-  for(const e of D.enemies){if(e.dead)continue;const d=Math.hypot(e.x-pl.x,e.y-pl.y);if(d<190){hurtEnemy(e,ST.dmg*(1+ST.dmgP/100)*1.2,'phys');if(!e.boss){e.kx+=(e.x-pl.x)/d*600;e.ky+=(e.y-pl.y)/d*600;}}}
+  for(const e of D.enemies){if(e.dead)continue;const d=Math.hypot(e.x-pl.x,e.y-pl.y);if(d<190){hurtEnemy(e,ST.dmg*(1+ST.dmgP/100)*.6,'phys');if(!e.boss){e.kx+=(e.x-pl.x)/d*600;e.ky+=(e.y-pl.y)/d*600;}}}
   if(ST.flags.wardE){const el=ST.weapon&&ST.weapon.el?ST.weapon.el:'phys';for(let i=0;i<12;i++){const a=i/12*TAU;D.pb.push({x:pl.x,y:pl.y,vx:Math.cos(a)*480,vy:Math.sin(a)*480,r:6,dmg:ST.dmg*(1+ST.dmgP/100)*1.4,el:el,life:.8,pierce:2,bounce:0,crit:ST.crit/100,critD:ST.critD/100,hit:[],own:'p',col:ECOL[el],aoe:0});}}
   ringFx(pl.x,pl.y,190,'#8ad0ff',.5);ringFx(pl.x,pl.y,120,'#fff',.35);sfx('ward');G.shake=Math.max(G.shake,6);
   if(n)floatText(pl.x,pl.y-40,'Absorbed '+n,'#8ad0ff',13);
@@ -1465,15 +1467,15 @@ function useShrine(s){
     case 0:pl.buff.fury=45;break;case 1:pl.buff.haste=45;break;
     case 2:pl.hp=ST.maxhp;pl.pot=Math.min(pl.pot+1,ST.potion+2);break;
     case 3:pl.buff.greed=45;break;
-    default:if(chance(.5)){drop(pl.x,pl.y-30,'item',0,genItem(D.f+S.p.lvl/4+3,rollRar(2)));}else{pl.hp=Math.max(1,pl.hp-ST.maxhp*.15);floatText(pl.x,pl.y-30,'-15% life','#ff5a7a',15);}
+    default:if(chance(.5)){drop(pl.x,pl.y-30,'item',0,genItem(D.f+S.p.lvl/4+3,rollRar(1)));}else{pl.hp=Math.max(1,pl.hp-ST.maxhp*.15);floatText(pl.x,pl.y-30,'-15% life','#ff5a7a',15);}
   }
   showBanner(nm,s.k===4?'Fortune favors the bold':'Blessing received','#c45dff',2000);ringFx(s.x,s.y,120,'#c45dff',.6);burst(s.x,s.y,'#c45dff',24,200,.8,3);
 }
 function openChest(c){
-  c.open=true;sfx('loot');burst(c.x,c.y,'#ffd24a',20,200,.7,3);
+  c.open=true;tutEvt('chest');sfx('loot');burst(c.x,c.y,'#ffd24a',20,200,.7,3);
   const f=D.f,il=f+Math.floor(S.p.lvl/4)+ri(1,3);
   for(let i=0;i<ri(4,7);i++)drop(c.x,c.y,'gold',Math.round(rnd(4,10)*(1+f*.5)*(1+ST.gf/100)*(ev('golden')?2:1)),null);
-  drop(c.x,c.y,'item',0,genItem(il,Math.max(rollRar(.8),chance(.5)?1:0)));
+  drop(c.x,c.y,'item',0,genItem(il,D.f===0?2:Math.max(rollRar(.4),chance(.35)?1:0),D.f===0?'weapon':null));
   if(chance(.5))drop(c.x,c.y,'ess',ri(2,6),null);
   if(chance(.3))drop(c.x,c.y,'rune',0,{t:pick(RUNEKEYS),tier:Math.min(5,1+Math.floor(f/7))});
 }
@@ -1482,16 +1484,15 @@ function interactTarget(){
   for(const c of D.chests)if(!c.open)t(c,'chest','Open chest');
   for(const s of D.shrines)if(!s.used)t(s,'shrine',SHRINES[s.k]);
   if(D.exit&&D.exit.active)t(D.exit,'exit',D.boss?'Descend (boss defeated)':'Descend to next floor');
-  if(D.portal&&!D.portal.used)t(D.portal,'portal','Enter the Void Rift');
   return best;
 }
 function interact(){
   const t=interactTarget();if(!t)return;
   if(t.k==='chest')openChest(t.o);else if(t.k==='shrine')useShrine(t.o);
-  else if(t.k==='exit')nextFloor();else if(t.k==='portal'){t.o.used=true;startTrial('dun');}
+  else if(t.k==='exit'){if(D.f===0)endTutorial(true);else nextFloor();}
 }
 function nextFloor(){
-  sfx('portal');const f=D.f+1;
+  sfx('portal');const f=D.f+1;if(!PARTYL)netRunStart(f,G.runSeed);
   transition(()=>{buildFloor(f);});
 }
 function startDungeon(f,rs,joined){
@@ -1504,10 +1505,10 @@ function buildFloor(f,fresh){
   P.runMax=Math.max(P.runMax,f);P.maxFloor=Math.max(P.maxFloor,f);P.bestEver=Math.max(P.bestEver,f);qEvent('floor',f);
   pl.x=D.start.x;pl.y=D.start.y;pl.vx=pl.vy=0;
   if(fresh)pl.hp=ST.maxhp;else pl.hp=Math.min(ST.maxhp,pl.hp+ST.maxhp*.3);
-  pl.pot=ST.potion;pl.phoenix=true;pl.inv=1;pl.roll=0;pl.rch=ST.dodgeC;pl.rcd=0;pl.fcd=0;pl.dmgDone=0;pl.buff={};
+  pl.pot=ST.potion;pl.phoenix=true;pl.unyield=true;pl.inv=1;pl.roll=0;pl.rch=ST.dodgeC;pl.rcd=0;pl.fcd=0;pl.dmgDone=0;pl.buff={};
   PARTY.forEach(b=>{b.x=pl.x;b.y=pl.y;b.cd=1;});
   PT.length=0;TX.length=0;ARCS.length=0;RINGS.length=0;markExp();snapCam();
-  showBanner('Floor '+f,D.biome.n+(D.boss?' — BOSS FLOOR':''),D.boss?'#ff5a7a':'#5affd0',2600);
+  showBanner(f?'Floor '+f:'Tutorial',D.biome.n+(D.boss?' — BOSS FLOOR':''),D.boss?'#ff5a7a':'#5affd0',2600);
   chat('System','','Entered floor '+f+' — '+D.biome.n+'.');
 }
 function exitDungeon(died){
@@ -1611,18 +1612,18 @@ function updDun(dt){
   pl.aim=Math.atan2(mouse.wy-pl.y,mouse.wx-pl.x);
   if(pressed.space&&pl.roll<=0&&pl.rch>0){
     if(pl.rch>=ST.dodgeC)pl.rcd=1.1;
-    pl.rch--;pl.roll=.27;pl.inv=Math.max(pl.inv,.25);pl.rdx=il?ix:Math.cos(pl.aim);pl.rdy=il?iy:Math.sin(pl.aim);sfx('dodge');
+    pl.rch--;tutEvt('roll');pl.roll=.27;pl.inv=Math.max(pl.inv,.25);pl.rdx=il?ix:Math.cos(pl.aim);pl.rdy=il?iy:Math.sin(pl.aim);sfx('dodge');
   }
   const spdMul=(1+ST.move/100)*(pl.rampage>0?1.25:1)*(pl.buff.haste>0?1.2:1);
   if(pl.roll>0){pl.roll-=dt;moveD(pl,pl.rdx*560*dt,pl.rdy*560*dt,9);if(chance(.8))PT.push({x:pl.x,y:pl.y,vx:0,vy:0,l:.3,m:.3,c:S.p.color,s:6,g:0});}
   else moveD(pl,ix*178*spdMul*dt,iy*178*spdMul*dt,9);
   pl.moving=il>0||pl.roll>0;pl.anim+=dt*(pl.moving?1:.3);
-  const rate=(ST.weapon?ST.weapon.wb.rate:4)*(1+ST.aspd/100+(pl.ult>0?1:0)+(pl.rampage>0?.25:0)+(ST.flags.frenzy?Math.min(.3,(pl.frenzyN||0)*.03):0)+(ev('surge')?.3:0));
+  const rate=(ST.weapon?ST.weapon.wb.rate:4)*(1+ST.aspd/100+(pl.ult>0?.6:0)+(pl.rampage>0?.25:0)+(ST.flags.frenzy?Math.min(.3,(pl.frenzyN||0)*.03):0)+(ev('surge')?.3:0));
   if(mouse.l&&pl.fcd<=0&&pl.roll<=0){playerShoot();pl.fcd=1/rate;}
   if(mouse.rp&&pl.cd.nova<=0)castNova();
   if(pressed.q&&pl.cd.ward<=0)castWard();
-  if(pressed.r&&ST.flags.ult&&pl.cd.ult<=0){pl.ult=6;pl.cd.ult=cdOf(40);sfx('ult');ringFx(pl.x,pl.y,160,'#ffd24a',.5);floatText(pl.x,pl.y-36,'OVERLOAD!','#ffd24a',20);}
-  if(pressed.f&&pl.pot>0&&pl.hp<ST.maxhp){pl.pot--;heal(ST.maxhp*.45);sfx('loot');}
+  if(pressed.r&&ST.flags.ult&&pl.cd.ult<=0){pl.ult=5;pl.cd.ult=cdOf(75);sfx('ult');ringFx(pl.x,pl.y,160,'#ffd24a',.5);floatText(pl.x,pl.y-36,'OVERLOAD!','#ffd24a',20);}
+  if(pressed.f&&pl.pot>0&&pl.hp<ST.maxhp){pl.pot--;heal(ST.maxhp*.35);sfx('loot');}
   if(pressed.e)interact();
   pl.hp=Math.min(ST.maxhp,pl.hp+ST.regen*dt);
   for(const e of D.enemies){if(e.dead)continue;if(e.boss)updBoss(e,dt);else updEnemy(e,dt);}
@@ -1919,17 +1920,28 @@ function netRecv(m){
     case'chat':{
       const msg=String(m.msg||'').slice(0,120),nm=String(m.name||'?').slice(0,16),col=/^#[0-9a-f]{6}$/i.test(m.color)?m.color:'#ffd24a';
       if(m.ch==='Whisper'){if(!forMe(m))return;chat('Whisper',nm+' → you',msg,col);}
+      else if(m.ch==='Party'){if(!forMe(m))return;chat('Party',nm,msg,col);if(!PARTYL)for(const id of PARTYR)if(id!==m.id)netSend({t:'chat',ch:'Party',to:id,name:nm,color:col,msg:msg});}
       else{chat('World',nm,msg,col);const p=NET.peers[m.id];if(p){p.say=msg.length>34?msg.slice(0,32)+'…':msg;p.sayT=4.5;}}
       return;
     }
     case'inv':{if(!forMe(m))return;const p=NET.peers[m.id],nm=p?p.name:'Someone';invReq={id:m.id,name:nm,left:25};chat('Party','',nm+' invited you to a party. Press Y to accept.');toast(nm+' invited you to a party — press Y to accept');sfx('portal');return;}
     case'acc':{if(!forMe(m))return;const p=NET.peers[m.id];if(PARTYR.indexOf(m.id)<0)PARTYR.push(m.id);chat('Party','',(p?p.name:'A player')+' joined your party.');sfx('buy');return;}
-    case'pleave':{if(!forMe(m))return;const i=PARTYR.indexOf(m.id);if(i>=0){PARTYR.splice(i,1);const p=NET.peers[m.id];chat('Party','',(p?p.name:'A player')+' left your party.');}return;}
+    case'pleave':{if(!forMe(m))return;const i=PARTYR.indexOf(m.id);if(i>=0){PARTYR.splice(i,1);if(m.id===PARTYL)PARTYL=null;const p=NET.peers[m.id];chat('Party','',(p?p.name:'A player')+' left your party.');}return;}
     case'run':{
-      if(!forMe(m)||PARTYR.indexOf(m.id)<0||mode!=='hub')return;
-      const p=NET.peers[m.id],nm=p?p.name:'Your party';joinReq={rs:num(m.rs)>>>0,f:Math.max(1,num(m.f)|0),name:nm,left:40};
-      chat('Party','',nm+' is descending to floor '+joinReq.f+'. Press Y in town to join the same dungeon!');toast(nm+' entered floor '+joinReq.f+' — press Y to join');sfx('portal');return;
+      if(!forMe(m)||m.id!==PARTYL||G.tut)return;
+      const rs=num(m.rs)>>>0,f=Math.max(1,num(m.f)|0),p=NET.peers[m.id],nm=p?p.name:'Your leader';
+      if(mode==='dun'&&D&&(D.rs>>>0)===rs){if(D.f!==f){toast(nm+' descended — following');transition(()=>{buildFloor(f);});}return;}
+      if(mode!=='hub')return;
+      closePanel();toast(nm+' entered floor '+f+' — joining');chat('Party','',nm+' is descending to floor '+f+'. You follow.');startDungeon(f,rs,true);return;
     }
+    case'lead':{
+      if(!forMe(m)||m.id!==PARTYL)return;const all=(m.all||[]).filter(x=>typeof x==='string');
+      if(m.nl===NET.id){PARTYL=null;PARTYR.length=0;all.forEach(x=>{if(x!==NET.id)PARTYR.push(x);});chat('Party','','You are now the party leader.');}
+      else{PARTYL=String(m.nl);PARTYR.length=0;PARTYR.push(PARTYL);chat('Party','','The party leader changed.');}return;
+    }
+    case'ginfo':{GUILD=m.guild||null;recalc();if(G.panel==='guild')renderPanel();if(G.ginfoSay&&GUILD){G.ginfoSay=0;chat('Guild','',GUILD.name+': '+GUILD.members.map(x=>x.name+(x.online?'*':'')).join(', '));}return;}
+    case'gnote':chat('Guild','',String(m.msg||''));return;
+    case'gmsg':chat('Guild',String(m.name||'?').slice(0,16),String(m.msg||'').slice(0,120),'#7de0ff');return;
     case'dmg':{
       if(!forMe(m)||mode!=='dun'||!D||(num(m.rs)>>>0)!==(D.rs>>>0)||num(m.f)!==D.f||!Array.isArray(m.d))return;
       for(const pr of m.d){
@@ -1967,27 +1979,27 @@ function findPeer(name){
   return l.find(p=>p.name.toLowerCase()===n)||l.find(p=>p.name.toLowerCase().indexOf(n)===0);
 }
 function netWhisper(name,msg){
-  const p=findPeer(name);if(!p){chat('System','','No real player named "'+name+'" is online (bots cannot be whispered).');return;}
+  const p=findPeer(name);if(!p){chat('System','','No real player named "'+name+'" is online.');return;}
   netSend({t:'chat',ch:'Whisper',to:p.id,name:S.p.name,color:S.p.color,msg:msg});chat('Whisper','To '+p.name,msg);
 }
 function netInvite(id){
   const p=NET.peers[id];if(!p)return;if(PARTYR.indexOf(id)>=0)return;
-  if(PARTYR.length>=3){toast('Party is full');return;}
+  if(PARTYL){toast('Only the party leader can invite');return;}if(PARTYR.length>=3){toast('Party is full');return;}
   netSend({t:'inv',to:id});chat('Party','','You invited '+p.name+'.');toast('Invite sent to '+p.name);
 }
 function netAccept(){
   if(invReq){
-    const r=invReq;invReq=null;if(PARTYR.indexOf(r.id)<0)PARTYR.push(r.id);
-    netSend({t:'acc',to:r.id});chat('Party','','You joined '+r.name+'\'s party. When a member descends from town, press Y to join their dungeon.');sfx('buy');return;
+    const r=invReq;invReq=null;if(PARTYR.length){chat('Party','','Leave your current party first (/party leave).');return;}PARTYR.push(r.id);PARTYL=r.id;
+    netSend({t:'acc',to:r.id});chat('Party','','You joined '+r.name+'\'s party. You will follow the leader into every dungeon.');sfx('buy');return;
   }
   if(joinReq&&mode==='hub'&&!G.panel){const r=joinReq;joinReq=null;startDungeon(Math.min(r.f,S.p.maxFloor+5),r.rs,true);}
 }
 function partyDrop(id,silent){
-  const i=PARTYR.indexOf(id);if(i<0)return;PARTYR.splice(i,1);
+  const i=PARTYR.indexOf(id);if(i<0)return;PARTYR.splice(i,1);if(id===PARTYL)PARTYL=null;
   if(!silent){netSend({t:'pleave',to:id});const p=NET.peers[id];chat('Party','','You removed '+(p?p.name:'a player')+' from your party.');}
 }
-function partyLeaveAll(){if(!PARTYR.length){chat('System','','You have no real-player party.');return;}for(const id of PARTYR.slice())partyDrop(id);}
-function netRunStart(f,rs){for(const id of PARTYR)netSend({t:'run',to:id,f:f,rs:rs});}
+function partyLeaveAll(){if(!PARTYR.length){chat('System','','You are not in a party.');return;}for(const id of PARTYR.slice())partyDrop(id);PARTYL=null;}
+function netRunStart(f,rs){if(PARTYL)return;for(const id of PARTYR)netSend({t:'run',to:id,f:f,rs:rs});}
 function netCloudSave(){
   if(!(NET.mode==='server'&&NET.ws&&NET.ws.readyState===1&&!ACC.guest))return;
   const now=Date.now();if(now-NET.lastSave<20000)return;NET.lastSave=now;
@@ -1997,136 +2009,12 @@ function netPanelHtml(){
   const peers=peerList();
   let h='<div class="card"><b>Connection:</b> '+(NET.mode==='server'?'<span style="color:#7dff9a">Realm server ('+esc(NET.url)+')</span> — internet multiplayer and cloud save are active':'<span style="color:#ffd24a">Local realm</span> — other tabs or windows of this game in this browser appear as real players. For internet play connect to a realm server (Menu → 🌐).')+' · Account <b>'+esc(ACC.name)+'</b>'+(ACC.guest?' (guest)':'')+'</div>';
   h+='<h3>Real players online ('+peers.length+')</h3>';
-  if(!peers.length)h+='<div class="sm">Nobody else is here right now. The adventurers listed below are simulated; real players get gold names.</div>';
+  if(!peers.length)h+='<div class="sm">Nobody else is here right now. Open another tab or connect to a realm server to meet other players.</div>';
   for(const p of peers){
     const ip=PARTYR.indexOf(p.id)>=0;
     h+='<div class="card row" style="margin-bottom:4px"><span><b style="color:'+p.color+'">★ '+esc(p.name)+'</b> <span class="sm">Lv '+p.lvl+' · best floor '+p.fl+' · '+(p.mode==='dun'?'in dungeon, floor '+p.f:p.mode==='hub'?'in town':'in a trial')+(ip?' · in your party':'')+'</span></span><span>'+(ip?'<button class="btn red" data-a="pleave" data-id="'+p.id+'">Leave party</button>':'<button class="btn" data-a="pinvite" data-id="'+p.id+'">Invite</button>')+'<button class="btn" data-a="pwhisper" data-id="'+p.id+'">Whisper</button></span></div>';
   }
   return h;
-}
-
-// ============================================================ PLATFORMER TRIALS
-const TT=40;
-function genTrial(level){
-  const rows=20,len=90+Math.min(80,level*8),Wc=len+70,g=[];
-  for(let y=0;y<rows;y++)g.push(new Uint8Array(Wc));
-  const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),movers=[],coins=[],checks=[];
-  let gy=14,cols=0;
-  const fill=(x0,x1,top)=>{for(let x=x0;x<x1;x++)for(let y=top;y<rows;y++)g[y][x]=1;};
-  fill(0,10,gy);cols=10;let seg=0;
-  while(cols<len){
-    const kind=pick(['gap','gap','stairs','spikes','floaters','mover','crumble']);seg++;
-    if(kind==='gap'){const gw=R(2,Math.min(4,2+Math.floor(level/4))),ng=clamp(gy+R(-1,1),8,16);coins.push({x:(cols+gw/2)*TT,y:(Math.min(gy,ng)-3)*TT});cols+=gw;const run=R(3,6);fill(cols,cols+run,ng);gy=ng;cols+=run;}
-    else if(kind==='stairs'){const n=R(2,4);for(let i=0;i<n;i++){gy=clamp(gy+(chance(.7)?-R(1,2):R(1,2)),7,16);const run=R(2,3);fill(cols,cols+run,gy);coins.push({x:(cols+1)*TT,y:(gy-2)*TT});cols+=run;}}
-    else if(kind==='spikes'){const sw=R(2,3+(level>10?1:0)),run=sw+5;fill(cols,cols+run,gy);for(let i=0;i<sw;i++)g[gy-1][cols+2+i]=2;coins.push({x:(cols+2+sw/2)*TT,y:(gy-3)*TT});cols+=run;}
-    else if(kind==='floaters'){const n=R(3,4+Math.floor(level/6));let px=cols,py=gy;for(let i=0;i<n;i++){px+=R(2,3);py=clamp(py+R(-2,1),8,16);const pw=R(2,3);for(let x=0;x<pw;x++)g[py][px+x]=1;coins.push({x:(px+pw/2)*TT,y:(py-2)*TT});px+=pw;}px+=R(2,3);gy=py;fill(px,px+4,gy);cols=px+4;}
-    else if(kind==='mover'){const gw=R(5,7);movers.push({x0:cols*TT,x1:(cols+gw-3)*TT,x:cols*TT,y:gy*TT,w:3*TT,h:14,ph:Math.random()*6,dx:0});cols+=gw;fill(cols,cols+4,gy);cols+=4;}
-    else{const n=R(4,7);for(let i=0;i<n;i++)g[gy][cols+i]=3;cols+=n;fill(cols,cols+3,gy);cols+=3;}
-    if(seg%3===0){fill(cols,cols+3,gy);checks.push({x:(cols+1)*TT,y:(gy-1)*TT});cols+=3;}
-  }
-  fill(cols,cols+14,gy);g[gy-1][cols+7]=7;
-  const start={x:3*TT,y:(14-2)*TT};
-  return{g:g,Wc:Wc,rows:rows,movers:movers,coins:coins,checks:checks,cp:{x:start.x,y:start.y},t:0,deaths:0,got:0,total:coins.length,cr:{},level:level,par:len/3.4+10,done:false,
-    p:{x:start.x,y:start.y,w:22,h:34,vx:0,vy:0,onG:false,coy:0,buf:0,jumps:0,dash:0,dcd:0,face:1,sq:0},from:'hub',cam:0,camy:0};
-}
-function startTrial(from){
-  sfx('portal');const lvl=S.p.trials+1+Math.floor(S.p.maxFloor/3);
-  transition(()=>{mode='plat';PL=genTrial(lvl);PL.from=from;PL.cam=0;PL.camy=0;PT.length=0;TX.length=0;RINGS.length=0;ARCS.length=0;showBanner('Secret Dimension','Reach the artifact — Space: jump · Shift: dash','#ff6ac1',3000);});
-}
-function leaveTrial(){
-  const from=PL?PL.from:'hub';
-  transition(()=>{
-    if(from==='dun'&&D){mode='dun';PL=null;pl.inv=1.5;PT.length=0;TX.length=0;snapCam();}
-    else{enterHubAt(1100,330);}
-    recalc();save();
-  });
-}
-function abandonTrial(){leaveTrial();}
-function pSolid(tx,ty){
-  const L=PL;if(tx<0||tx>=L.Wc)return true;if(ty<0||ty>=L.rows)return false;
-  const t=L.g[ty][tx];if(t===1)return true;if(t===3){const c=L.cr[ty*L.Wc+tx];return!(c&&c.fall);}return false;
-}
-function pDie(){
-  const L=PL,p=L.p;L.deaths++;sfx('hurt');G.shake=10;burst(p.x+11,p.y+17,'#ff6ac1',24,260,.6,3);
-  p.x=L.cp.x;p.y=L.cp.y;p.vx=p.vy=0;p.dash=0;
-}
-function updPlat(dt){
-  const L=PL,p=L.p;if(L.done)return;L.t+=dt;
-  const sub=4,h=dt/sub;
-  const dir=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0);
-  if(dir)p.face=dir;
-  const jp=pressed.space||pressed.w||pressed.arrowup;
-  if(jp)p.buf=.12;
-  if(!(keys.space||keys.w||keys.arrowup)&&p.vy<-200&&p.jh){p.vy*=.5;p.jh=false;}
-  if(pressed.shift&&p.dcd<=0){p.dash=.16;p.dcd=.7;p.vx=p.face*620;p.vy=0;sfx('dodge');}
-  p.dcd-=dt;p.coy-=dt;p.buf-=dt;p.dash-=dt;
-  const sp=260*(1+ST.move/400);
-  for(const m of L.movers){const nx=m.x0+(m.x1-m.x0)*(.5+.5*Math.sin(L.t*.8+m.ph));m.dx=nx-m.x;m.x=nx;}
-  for(let s=0;s<sub;s++){
-    if(p.dash<=0){const tv=dir*sp,a=(dir?3400:3000)*h;p.vx=p.vx<tv?Math.min(tv,p.vx+a):Math.max(tv,p.vx-a);p.vy=Math.min(900,p.vy+1900*h);}
-    if(p.onG){p.coy=.1;p.jumps=0;}
-    if(p.buf>0&&p.coy>0){p.vy=-640;p.coy=0;p.buf=0;p.jumps=1;p.jh=true;p.onG=false;sfx('jump');burst(p.x+11,p.y+34,'#fff',6,90,.3,2);}
-    else if(p.buf>0&&ST.flags.dj&&p.jumps<2&&!p.onG){p.vy=-600;p.buf=0;p.jumps=2;p.jh=true;sfx('jump');burst(p.x+11,p.y+34,'#ff6ac1',10,120,.4,2);}
-    p.x+=p.vx*h;
-    {const x0=Math.floor(p.x/TT),x1=Math.floor((p.x+p.w-.01)/TT),y0=Math.floor(p.y/TT),y1=Math.floor((p.y+p.h-.01)/TT);
-      for(let ty=y0;ty<=y1;ty++)for(let tx=x0;tx<=x1;tx++)if(pSolid(tx,ty)){if(p.vx>0)p.x=tx*TT-p.w;else if(p.vx<0)p.x=(tx+1)*TT;p.vx=0;}}
-    const py0=p.y;p.y+=p.vy*h;p.onG=false;let ride=null;
-    {const x0=Math.floor(p.x/TT),x1=Math.floor((p.x+p.w-.01)/TT),y0=Math.floor(p.y/TT),y1=Math.floor((p.y+p.h-.01)/TT);
-      for(let ty=y0;ty<=y1;ty++)for(let tx=x0;tx<=x1;tx++)if(pSolid(tx,ty)){if(p.vy>0){p.y=ty*TT-p.h;p.onG=true;}else if(p.vy<0)p.y=(ty+1)*TT;p.vy=0;}}
-    for(const m of L.movers){if(p.vy>=0&&py0+p.h<=m.y+6&&p.y+p.h>=m.y&&p.x+p.w>m.x&&p.x<m.x+m.w){p.y=m.y-p.h;p.vy=0;p.onG=true;ride=m;}}
-    if(ride)p.x+=ride.dx/sub;
-  }
-  if(p.onG){p.dcd=Math.min(p.dcd,.2);const tx=Math.floor((p.x+p.w/2)/TT),ty=Math.floor((p.y+p.h+2)/TT);
-    if(ty<L.rows&&L.g[ty][tx]===3){const k=ty*L.Wc+tx;if(!L.cr[k])L.cr[k]={t:0,fall:false};}
-    if(!p.wasG){sfx('land');burst(p.x+11,p.y+34,'#bbb',5,70,.25,2);}}
-  p.wasG=p.onG;
-  for(const k in L.cr){const c=L.cr[k];c.t+=dt;if(!c.fall&&c.t>.45){c.fall=true;c.t=0;}else if(c.fall&&c.t>2.2)delete L.cr[k];}
-  // hazards
-  const hx0=Math.floor((p.x+4)/TT),hx1=Math.floor((p.x+p.w-4)/TT),hy0=Math.floor((p.y+10)/TT),hy1=Math.floor((p.y+p.h-1)/TT);
-  for(let ty=hy0;ty<=hy1;ty++)for(let tx=hx0;tx<=hx1;tx++){if(ty<0||ty>=L.rows||tx<0||tx>=L.Wc)continue;const t=L.g[ty][tx];if(t===2&&p.y+p.h>ty*TT+18){pDie();return;}if(t===7){finishTrial();return;}}
-  if(p.y>L.rows*TT+80){pDie();return;}
-  for(const c of L.checks)if(Math.abs(p.x-c.x)<30&&Math.abs(p.y-c.y)<60&&L.cp!==c){L.cp=c;toast('Checkpoint');sfx('loot');}
-  for(const c of L.coins){if(c.got)continue;if(Math.hypot(p.x+11-c.x,p.y+17-c.y)<26){c.got=true;L.got++;sfx('coin');burst(c.x,c.y,'#ffd24a',8,120,.4,2);}}
-  if(chance(dt*30)&&Math.abs(p.vx)>100&&p.onG)PT.push({x:p.x+11,y:p.y+34,vx:-p.vx*.1,vy:-20,l:.3,m:.3,c:'#aaa',s:3,g:0});
-}
-function finishTrial(){
-  const L=PL,P=S.p;L.done=true;
-  const stars=(L.t<L.par?1:0)+(L.deaths===0?1:0)+(L.got>=L.total*.7?1:0);
-  const id=pick(Object.keys(ARTS));P.art[id]=Math.min(10,(P.art[id]||0)+1);
-  const ess=Math.round((20+L.level*8)*(1+stars)),rune=stars>=2;
-  P.ess+=ess;if(rune)addRune(pick(RUNEKEYS),1+Math.floor(P.maxFloor/8));
-  P.gold+=Math.round(L.got*(5+L.level*4));P.trials++;qEvent('trial',1);recalc();sfx('win');
-  G.result={stars:stars,time:L.t,deaths:L.deaths,coins:L.got,total:L.total,art:ARTS[id].n,artD:ARTS[id].d+' per rank',rank:P.art[id],ess:ess,rune:rune};
-  save();openPanel('result');
-}
-function drawPlat(){
-  const L=PL,p=L.p;
-  const tcx=p.x-W*.4,tcy=clamp(p.y-H*.55,-80,L.rows*TT-H+120);
-  L.cam+=(tcx-L.cam)*.12;L.camy+=(tcy-L.camy)*.1;L.cam=clamp(L.cam,0,Math.max(0,L.Wc*TT-W));
-  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#150a2e');g.addColorStop(1,'#3a1448');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-  for(let k=0;k<3;k++){ctx.fillStyle='rgba('+(40+k*25)+',20,'+(80+k*30)+','+(.35+k*.12)+')';ctx.beginPath();ctx.moveTo(0,H);for(let x=0;x<=W;x+=20){ctx.lineTo(x,H*(.62+k*.1)+Math.sin((x+L.cam*(.1+k*.15))/(130+k*60))*(40+k*10)-k*10);}ctx.lineTo(W,H);ctx.fill();}
-  ctx.fillStyle='#fff';for(let i=0;i<60;i++){ctx.globalAlpha=.3+.4*Math.sin(G.t*2+i);ctx.fillRect((hash2(i,3)*W*1.5-L.cam*.05)%W,hash2(i,4)*H*.6,2,2);}ctx.globalAlpha=1;
-  const sx=(Math.random()-.5)*G.shake,sy=(Math.random()-.5)*G.shake;
-  ctx.save();ctx.translate(Math.round(-L.cam+sx),Math.round(-L.camy+sy));
-  const x0=Math.max(0,Math.floor(L.cam/TT)),x1=Math.min(L.Wc-1,Math.floor((L.cam+W)/TT));
-  for(let y=0;y<L.rows;y++)for(let x=x0;x<=x1;x++){
-    const t=L.g[y][x];if(!t)continue;const px=x*TT,py=y*TT;
-    if(t===1){ctx.fillStyle='#2a1c4e';ctx.fillRect(px,py,TT+1,TT+1);if(y===0||L.g[y-1][x]!==1){ctx.fillStyle='#b48cff';ctx.fillRect(px,py,TT+1,4);ctx.fillStyle='#4a3490';ctx.fillRect(px,py+4,TT+1,6);}}
-    else if(t===3){const c=L.cr[y*L.Wc+x];if(c&&c.fall)continue;ctx.fillStyle=c?'#c0803a':'#8a6a3a';ctx.fillRect(px+1,py+1,TT-2,TT*.5);ctx.fillStyle='#e0b070';ctx.fillRect(px+1,py+1,TT-2,3);if(c){ctx.fillStyle='rgba(0,0,0,.4)';ctx.fillRect(px+8+Math.random()*4,py+4,2,12);}}
-    else if(t===2){ctx.fillStyle='#ff6a8a';for(let i=0;i<3;i++){ctx.beginPath();ctx.moveTo(px+i*13.3,py+TT);ctx.lineTo(px+i*13.3+6.6,py+14);ctx.lineTo(px+i*13.3+13.3,py+TT);ctx.fill();}}
-    else if(t===7){ctx.globalCompositeOperation='lighter';ctx.drawImage(glow('#ffd24a',50),px-60,py-70,160,160);ctx.globalCompositeOperation='source-over';ctx.fillStyle='#ffd24a';ctx.save();ctx.translate(px+20,py+14+Math.sin(G.t*3)*4);ctx.rotate(G.t);ctx.fillRect(-9,-9,18,18);ctx.restore();ctx.fillStyle='#554';ctx.fillRect(px+8,py+TT-8,24,8);}
-  }
-  for(const m of L.movers){ctx.fillStyle='#6a4ad8';ctx.fillRect(m.x,m.y,m.w,m.h);ctx.fillStyle='#d0b8ff';ctx.fillRect(m.x,m.y,m.w,3);}
-  for(const c of L.checks){ctx.fillStyle=L.cp===c?'#5affd0':'#667';ctx.fillRect(c.x+6,c.y-20,3,60);ctx.beginPath();ctx.moveTo(c.x+9,c.y-20);ctx.lineTo(c.x+30,c.y-10);ctx.lineTo(c.x+9,c.y);ctx.fill();}
-  for(const c of L.coins){if(c.got)continue;ctx.globalCompositeOperation='lighter';ctx.drawImage(glow('#ffd24a',16),c.x-16,c.y-16+Math.sin(G.t*4+c.x)*3,32,32);ctx.globalCompositeOperation='source-over';}
-  // player
-  const sq=clamp(Math.abs(p.vy)/900,0,.3),w=p.w*(1-sq*.5),h=p.h*(1+sq*.4);
-  ctx.fillStyle='rgba(0,0,0,.3)';ctx.fillRect(p.x,p.y+p.h-2,p.w,3);
-  if(p.dash>0){ctx.globalAlpha=.4;ctx.fillStyle=S.p.color;ctx.fillRect(p.x-p.face*18,p.y,p.w,p.h);ctx.globalAlpha=1;}
-  const gr=ctx.createLinearGradient(0,p.y,0,p.y+p.h);gr.addColorStop(0,S.p.color);gr.addColorStop(1,shade(S.p.color,-.5));ctx.fillStyle=gr;rr(p.x+(p.w-w)/2,p.y+p.h-h,w,h,6);ctx.fill();
-  ctx.fillStyle='#fff';ctx.fillRect(p.x+(p.face>0?13:3),p.y+8,6,6);ctx.fillStyle='#111';ctx.fillRect(p.x+(p.face>0?16:4),p.y+10,3,3);
-  drawFX();
-  ctx.restore();
 }
 
 // ============================================================ HUD
@@ -2157,21 +2045,21 @@ function drawHUD(){
     bar(14,38,230,8,P.lvl>=100?1:P.xp/xpNeed(P.lvl),'#5a8aff','#5affd0');
     ctx.fillStyle='#fff';ctx.font='700 13px system-ui';ctx.fillText(P.name+'  Lv '+P.lvl+(P.ascs?'  ✧'+P.ascs:''),14,64);
     ctx.fillStyle='#ffd96a';ctx.fillText('◈ '+fmt(P.gold),14,82);ctx.fillStyle='#6fd6ff';ctx.fillText('✦ '+fmt(P.ess),90,82);
-    ctx.fillStyle='rgba(220,230,255,.7)';ctx.font='11px system-ui';ctx.fillText('Online '+(BOTS.length+1+peerList().length)+' ('+(1+peerList().length)+' real) · In dungeons '+G.away+(PARTY.length?' · Party '+PARTY.length:''),14,98);
+    ctx.fillStyle='rgba(220,230,255,.7)';ctx.font='11px system-ui';ctx.fillText('Online '+(1+peerList().length)+(PARTYR.length?' · Party '+(PARTYR.length+1):'')+(GUILD?' · '+GUILD.name:''),14,98);
     drawMini();
   }
   ctx.textAlign='center';ctx.font='700 15px system-ui';ctx.fillStyle='#fff';
-  if(mode==='dun'){ctx.fillText('Floor '+D.f+' — '+D.biome.n,W/2,24);}
+  if(mode==='dun'){ctx.fillText(D.f?'Floor '+D.f+' — '+D.biome.n:'Tutorial — '+D.biome.n,W/2,24);}
   else if(mode==='hub'){const ph=(G.clock%300)/300;ctx.fillText('Ascendia Hub — '+(Math.sin(ph*TAU)>0?'Day':'Night'),W/2,24);}
   else if(mode==='plat'){const L=PL;ctx.fillText('Secret Dimension  ·  '+L.t.toFixed(1)+'s  ·  Deaths '+L.deaths+'  ·  Shards '+L.got+'/'+L.total,W/2,24);
     bar(W/2-150,36,300,8,clamp(L.p.x/(L.Wc*TT-600),0,1),'#ff6ac1','#ffd24a');}
   if(G.evt){ctx.font='600 12px system-ui';ctx.fillStyle=G.evt.c;ctx.fillText('◆ '+G.evt.n+' ('+Math.ceil(G.evt.left)+'s)',W/2,42+(mode==='plat'?14:0));}
   ctx.textAlign='left';
   if(mode==='dun'){
-    const b=D.enemies.find(e=>e.boss&&e.aware&&!e.dead);
+    drawTutArrow();const b=D.enemies.find(e=>e.boss&&e.aware&&!e.dead);
     if(b){const w=Math.min(520,W-300);bar(W/2-w/2,58,w,14,b.hp/b.max,b.bcol,'#fff');ctx.textAlign='center';ctx.fillStyle='#fff';ctx.font='700 12px system-ui';ctx.fillText(b.name,W/2,54);ctx.textAlign='left';}
     // skill bar
-    const sk=[['LMB','Shoot',0,0],['RMB','Nova',pl.cd.nova,cdOf(5)],['Q','Ward',pl.cd.ward,cdOf(12)],['R','Ult',ST.flags.ult?pl.cd.ult:-1,cdOf(40)],['SPC','Roll',pl.rch>0?0:1.1,1.1],['F','Potion '+pl.pot,pl.pot>0?0:1,1]];
+    const sk=[['LMB','Shoot',0,0],['RMB','Nova',pl.cd.nova,cdOf(14)],['Q','Ward',pl.cd.ward,cdOf(20)],['R','Ult',ST.flags.ult?pl.cd.ult:-1,cdOf(75)],['SPC','Roll',pl.rch>0?0:1.1,1.1],['F','Potion '+pl.pot,pl.pot>0?0:1,1]];
     const bw=54,tx=W/2-sk.length*bw/2;
     sk.forEach((s,i)=>{const x=tx+i*bw,y=H-66;ctx.fillStyle='rgba(8,10,26,.8)';rr(x,y,bw-6,48,8);ctx.fill();ctx.strokeStyle=s[2]===-1?'#333':'#6a7aff';ctx.stroke();
       if(s[2]>0){ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(x+1,y+1,bw-8,46*clamp(s[2]/s[3],0,1));}
@@ -2184,7 +2072,7 @@ function drawHUD(){
     if(G.dead>0){ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(0,0,W,H);ctx.textAlign='center';ctx.fillStyle='#ff5a7a';ctx.font='800 54px system-ui';ctx.fillText('YOU DIED',W/2,H/2);ctx.textAlign='left';}
   }
   ctx.fillStyle='rgba(200,210,255,.5)';ctx.font='11px system-ui';ctx.textAlign='right';
-  ctx.fillText(mode==='hub'?'[I] Inventory  [T] Talents  [U] Idle  [J] Quests  [M] Market  [K] Ascend  [P] Party  [H] Help':'[I] Inventory  [T] Talents  [Esc] Menu  [H] Help',W-12,H-10);ctx.textAlign='left';
+  ctx.fillText(mode==='hub'?'[I] Gear  [T] Talents  [P] Party  [G] Guild  [J] Quests  [M] Merchant  [K] Ascend  [H] Help':'[I] Gear  [T] Talents  [P] Party  [G] Guild  [Esc] Menu  [H] Help',W-12,H-10);ctx.textAlign='left';
   if(G.evt&&G.evt.id==='blood'){ctx.fillStyle='rgba(120,0,20,.08)';ctx.fillRect(0,0,W,H);}
 }
 
@@ -2196,13 +2084,13 @@ function onKey(k,e){
   if(G.panel==='result')return;
   if(k==='y')netAccept();else if(k==='i')togglePanel('inv');else if(k==='t')togglePanel('tal');else if(k==='h')togglePanel('help');
   else if(k==='n'){S.set.mute=!S.set.mute;toast('Sound '+(S.set.mute?'off':'on'));}
-  else if(mode==='hub'){const m={u:'idle',j:'quest',m:'market',k:'asc',p:'party'}[k];if(m)togglePanel(m);}
+  else if(k==='g')togglePanel('guild');else if(k==='p')togglePanel('party');else if(mode==='hub'){const m={j:'quest',m:'market',k:'asc'}[k];if(m)togglePanel(m);}
 }
 const paused=()=>!!G.panel&&mode!=='hub';
 function update(dt){
   G.t+=dt;G.clock+=dt;S.p.play+=dt;
   mouse.wx=mouse.x+cam.x;mouse.wy=mouse.y+cam.y;
-  idleTick(dt);tickEvents(dt);updBots(dt);netTick(dt);
+  tickEvents(dt);netTick(dt);tutTick();
   G.mktT+=dt;if(G.mktT>240){G.mktT=0;refreshMarket();}
   G.saveT+=dt;if(G.saveT>15){G.saveT=0;save();}
   G.shake*=Math.pow(.001,dt);if(G.shake<.2)G.shake=0;G.flash=Math.max(0,G.flash-dt);
@@ -2211,10 +2099,9 @@ function update(dt){
   if(G.fade){G.fade.t+=dt*2.6;if(!G.fade.done&&G.fade.t>=1){G.fade.done=true;G.fade.cb();}if(G.fade.t>=2)G.fade=null;return;}
   if(mode==='hub')updHub(dt);
   else if(mode==='dun'){if(!paused())updDun(dt*G.slow);}
-  else if(mode==='plat'){if(!paused())updPlat(dt);}
 }
 function render(){
-  if(mode==='hub')drawHub();else if(mode==='dun'&&D)drawDun();else if(mode==='plat'&&PL)drawPlat();
+  if(mode==='hub')drawHub();else if(mode==='dun'&&D)drawDun();
   drawHUD();
   if(G.fade){const a=G.fade.t<1?G.fade.t:2-G.fade.t;ctx.fillStyle='rgba(0,0,0,'+clamp(a,0,1)+')';ctx.fillRect(0,0,W,H);}
 }
@@ -2227,18 +2114,16 @@ function frame(t){
 }
 function boot(){
   resize();
-  const had=load();if(!had&&!ACC.guest)S.p.name=ACC.name;recalc();
+  const had=load();if(!had&&!ACC.guest)S.p.name=ACC.name;if(had&&S.p.tutDone===undefined)S.p.tutDone=true;recalc();
   pl.hp=ST.maxhp;
-  for(let i=0;i<22;i++)BOTS.push(makeBot());
-  ensureQuests();refreshMarket();
+    ensureQuests();refreshMarket();
   enterHubAt(1100,520);netStart();
   chat('System','','Welcome to Ascendia, '+S.p.name+(had?' — progress loaded.':'!')+' Walk with WASD, press E at buildings, H for help.');
-  chat('World',BOTS[0].name,'welcome '+S.p.name+'!',BOTS[0].col);
-  if(had)offlineProgress();
-  if(!had){setTimeout(()=>openPanel('help'),400);}
+  
+  if(!S.p.tutDone)startTutorial();
   addEventListener('beforeunload',()=>{NET.lastSave=0;save();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden)save();});
-  window.ASC={S:()=>S,startDungeon,startTrial,openPanel,closePanel,update,render,mode:()=>mode,D:()=>D,PL:()=>PL,pl,G,genItem,doAct,save,load,recalc,finishTrial,keys,pressed,mouse,PARTY,BOTS,giveItem,exitDungeon,nextFloor,renderPanel,ST:()=>ST,partyInvite,killEnemy,TS,NET,netRecv,peerList,PARTYR,ACC,dunPeers,genDungeon,netTick};
+  window.ASC={S:()=>S,D:()=>D,G,pl,NET,startDungeon,startTutorial,openPanel,genItem,save,update,render,chatCmd,netRecv,renderPanel,mode:()=>mode,PARTYR,PARTYL:()=>PARTYL,recalc,TUT,tutNext,buildFloor,keys,mouse};
   requestAnimationFrame(frame);
 }
 showLogin(boot);
